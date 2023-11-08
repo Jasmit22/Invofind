@@ -19,13 +19,15 @@ function App() {
 
   return (
     <div>
-      <div className='invofindHeading'>
+      <div className="banner">
+        <div className='invofindHeading'>
       InvoFind 🔍
-      </div>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+        </div>
+        <div className="card">
+          <button onClick={() => setCount((count) => count + 1)}>
+          Log in {count}
+          </button>
+        </div>
       </div>
     </div>
   )
