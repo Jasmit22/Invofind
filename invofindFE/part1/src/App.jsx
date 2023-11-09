@@ -45,7 +45,7 @@ function App() {
     // }
   };
 
-  const loginForm = () => {
+  const renderLogin = () => {
     return (
       <div>
         <Togglable buttonLabel="Log In">
@@ -61,15 +61,21 @@ function App() {
     );
   };
 
+  const renderLogout = () => {
+    return (
+      <div className="logOut">
+        <button onClick={() => {}}>Log out</button>
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="banner">
         <div className="invofindHeading">InvoFind 🔍</div>
-        <div className="logOut">
-          <button onClick={() => {}}>Log out</button>
-        </div>
+        {user !== null && renderLogout()}
       </div>
-      <div className="content">{user === null && loginForm()}</div>
+      <div className="content">{user === null && renderLogin()}</div>
     </div>
   );
 }
