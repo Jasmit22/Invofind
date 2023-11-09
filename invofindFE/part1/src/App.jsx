@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import Togglable from "./components/Togglable";
 import LoginForm from "./components/LoginForm";
+import loginService from "./services/login";
+import taskService from "./services/tasks";
+import Notification from "./components/Notification";
 
 import "./App.css";
 
@@ -24,25 +27,36 @@ function App() {
     }
   }, []);
 
+  const checkLoginStatus = () => {
+    const decode = JSON.parse(atob(user.token.split(".")[1]));
+    if (decode.exp * 1000 < new Date().getTime()) {
+      window.localStorage.removeItem("loggedBlogappUser");
+      setUser(null);
+      setErrorMessage("Session Timed Out. Please Log In Again.");
+      return true;
+    }
+    return false;
+  };
+
   const handleLogin = async (event) => {
-    // event.preventDefault();
-    // try {
-    //   const user = await loginService.login({
-    //     username,
-    //     password,
-    //   });
-    //   blogService.setToken(user.token);
-    //   window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-    //   setUser(user);
-    //   setUsername("");
-    //   setPassword("");
-    // } catch (exception) {
-    //   setErrorMessage(exception.response.data.error);
-    //   setTimeout(() => {
-    //     setErrorMessage(null);
-    //   }, 4000);
-    //   console.log(exception);
-    // }
+    event.preventDefault();
+    try {
+      const user = await loginService.login({
+        username,
+        password,
+      });
+      taskService.setToken(user.token);
+      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+      setUser(user);
+      setUsername("");
+      setPassword("");
+    } catch (exception) {
+      setErrorMessage(exception.response.data.error);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 4000);
+      console.log(exception);
+    }
   };
 
   const renderLogin = () => {
@@ -64,7 +78,14 @@ function App() {
   const renderLogout = () => {
     return (
       <div className="logOut">
-        <button onClick={() => {}}>Log out</button>
+        <button
+          onClick={() => {
+            window.localStorage.removeItem("loggedBlogappUser");
+            setUser(null);
+          }}
+        >
+          Log out
+        </button>
       </div>
     );
   };
@@ -75,7 +96,11 @@ function App() {
         <div className="invofindHeading">InvoFind 🔍</div>
         {user !== null && renderLogout()}
       </div>
-      <div className="content">{user === null && renderLogin()}</div>
+
+      <div className="content">
+        <Notification message={errorMessage} />
+        {user === null && renderLogin()}
+      </div>
     </div>
   );
 }

@@ -94,6 +94,33 @@ input:focus {
   align-items: center;
 }
 
+.error {
+  background-color: #3498db;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: fadeOut 1s ease;
+  animation-fill-mode: forwards;
+  animation-delay: 2s;
+  position: relative; /* Use relative positioning */
+  margin-top: 20px; /* Adjust the top margin to create space below the title */
+  font-weight: 800;
+}
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    display: none; /* Hide the element when the animation is complete */
+  }
+}
+
 .invofindHeading {
   transition: 0.25s;
   color: #a0d2eb;
