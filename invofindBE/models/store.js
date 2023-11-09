@@ -2,9 +2,9 @@ const { Model, DataTypes } = require("sequelize");
 
 const { sequelize } = require("../util/db");
 
-class Team extends Model {}
+class Store extends Model {}
 
-Team.init(
+Store.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -21,8 +21,8 @@ Team.init(
     sequelize,
     underscored: true,
     timestamps: false,
-    modelName: "team",
+    modelName: "store",
   }
 );
 
-module.exports = Team;
+module.exports = Store;

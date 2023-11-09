@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const router = require("express").Router();
 const { tokenExtractor } = require("../util/middleware");
-const { User, Task, Team } = require("../models");
+const { User, Task, Store } = require("../models");
 
 router.get("/", async (req, res) => {
   const users = await User.findAll({
@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
         attributes: { exclude: ["userId"] },
       },
       {
-        model: Team,
+        model: Store,
         attributes: ["name", "id"],
         through: {
           attributes: [],
@@ -61,14 +61,14 @@ router.get("/:id", async (req, res) => {
     return res.status(404).end();
   }
 
-  let teams = undefined;
-  if (req.query.teams) {
-    teams = await user.getTeams({
+  let stores = undefined;
+  if (req.query.stores) {
+    stores = await user.getStores({
       attributes: ["name"],
       joinTableAttributes: [],
     });
   }
-  res.json({ ...user.toJSON(), teams });
+  res.json({ ...user.toJSON(), stores });
 });
 
 const isAdmin = async (req, res, next) => {

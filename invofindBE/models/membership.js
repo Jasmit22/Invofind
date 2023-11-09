@@ -16,7 +16,7 @@ Membership.init(
       allowNull: false,
       references: { model: "users", key: "id" },
     },
-    teamId: {
+    storeId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: { model: "teams", key: "id" },
