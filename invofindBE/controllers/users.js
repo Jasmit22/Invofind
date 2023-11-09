@@ -24,10 +24,10 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const { username, name, password } = req.body;
+    const { username, name, password, admin } = req.body;
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
-    const user = await User.create({ username, name, passwordHash });
+    const user = await User.create({ username, name, passwordHash, admin });
     res.json(user);
   } catch (error) {
     return res.status(400).json({ error });

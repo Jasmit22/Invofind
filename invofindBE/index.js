@@ -8,6 +8,8 @@ const middleware = require("./util/middleware");
 const tasksRouter = require("./controllers/tasks");
 const usersRouter = require("./controllers/users");
 const loginRouter = require("./controllers/login");
+const cors = require("cors");
+app.use(cors());
 
 app.use(express.json());
 

@@ -64,6 +64,7 @@ button:focus-visible {
 
 /* Style for text inputs */
 input {
+  font-family: "Raleway", Helvetica, Inter, system-ui, Avenir, Arial, sans-serif;
   padding: 5px 0; /* Adjust padding for spacing */
   font-size: 16px; /* Adjust font size for readability */
   border: none; /* Remove the border */
@@ -72,12 +73,13 @@ input {
   background-color: transparent;
   color: white;
 }
-
-/* Style for text inputs on focus */
 input:focus {
   border-bottom-color: #a0d2eb; /* Change the bottom border color on focus */
   box-shadow: 0 2px 0 #a0d2eb; /* Add a slight shadow on focus */
   background-color: transparent;
+}
+.filterTasks {
+  padding-top: 1.5em;
 }
 
 .banner {
@@ -140,4 +142,10 @@ input:focus {
 
 .logOut {
   margin-right: 1.2em;
+}
+
+.addTask button {
+  margin-top: 1em;
+  background-color: #a0d2eb;
+  color: #373b4c;
 }

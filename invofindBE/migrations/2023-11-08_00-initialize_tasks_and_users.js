@@ -9,8 +9,11 @@ module.exports = {
         autoIncrement: true,
       },
       content: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING(60), // Change from TEXT to STRING with a maximum length of 60 characters
         allowNull: false,
+        validate: {
+          len: [1, 60], // Set the maximum length
+        },
       },
       resolved: {
         type: DataTypes.BOOLEAN,
