@@ -86,6 +86,7 @@ function App() {
   const showTasks = () => {
     return (
       <div className="allTasks">
+        {user !== null && user.admin && renderAddTask()}
         <input
           className="filterTasks"
           onChange={(event) => setNewFilter(event.target.value)}
@@ -200,7 +201,6 @@ function App() {
       <div className="content">
         <Notification message={errorMessage} />
         {user === null && renderLogin()}
-        {user !== null && user.admin && renderAddTask()}
         {user !== null && showTasks()}
       </div>
     </div>

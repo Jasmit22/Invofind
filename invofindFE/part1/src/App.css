@@ -149,3 +149,26 @@ input:focus {
   background-color: #a0d2eb;
   color: #373b4c;
 }
+
+.allTasks {
+  height: 30em;
+  overflow: auto;
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #a0d2eb #ffffff; /* For Firefox */
+
+  /* For WebKit-based browsers (Chrome, Safari) */
+  &::-webkit-scrollbar {
+    width: 8px; /* Adjust the width as needed */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #a0d2eb;
+    border-radius: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #ffffff;
+    border-radius: 6px;
+    margin-right: 8px; /* Adjust the margin to move it to the right */
+  }
+}
