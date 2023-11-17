@@ -9,7 +9,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #373b4c;
+  background-color: #31343f;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -39,7 +39,7 @@ button {
   font-family: "Raleway", Helvetica, Inter, system-ui, Avenir, Arial, sans-serif;
   align-self: center;
   padding: 5px 5px; /* Adjust padding for a modern look */
-  background-color: #373b4c;
+  background-color: #31343f;
   color: #fff; /* Set text color to white */
   border: none; /* Remove border */
   border-radius: 5px; /* Add rounded corners */
@@ -76,33 +76,6 @@ input:focus {
 }
 .filterTasks {
   margin-bottom: 1.5em;
-}
-
-.error {
-  background-color: #3498db;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  animation: fadeOut 1s ease;
-  animation-fill-mode: forwards;
-  animation-delay: 2s;
-  position: relative; /* Use relative positioning */
-  margin-top: 20px; /* Adjust the top margin to create space below the title */
-  font-weight: 800;
-}
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    display: none; /* Hide the element when the animation is complete */
-  }
 }
 
 .invofindHeading {
@@ -171,6 +144,7 @@ input:focus {
   margin-bottom: 1rem;
   width: 100%;
   font-size: 1.5rem;
+  box-shadow: 0px 0px 5px 0px #d0bdf4;
 }
 
 /* Style the buttons inside the tab */
@@ -187,31 +161,83 @@ input:focus {
   margin: 0;
 }
 
-/* Change background color of buttons on hover */
 .tab button:hover {
   background-color: #6c6f7e;
 }
-
-/* Create an active/current tablink class */
 .tab button.active {
   background: linear-gradient(to bottom, #d0bdf4, #a0d2eb);
   color: #373b4c;
 }
 
-/* Style the tab content */
 .tabcontent {
   display: none;
   padding: 6px 12px;
   border-top: none;
   background-color: #282a33;
   border-radius: 2rem;
+  box-shadow: 0px 0px 5px 0px #a0d2eb;
 }
 
-/* Optional: Clear floats after the tabs */
-.clearfix::after {
-  content: "";
-  clear: both;
-  display: table;
+.error-overlay {
+  position: fixed; /* Fixed position to cover the whole screen */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  background-color: rgba(0, 0, 0, 0.2); /* Semi-transparent black background */
+  z-index: 1000; /* High z-index to be on top of other elements */
+}
+.error-message {
+  padding: 20px;
+  font-weight: 700;
+  font-size: 1.5rem;
+  background: linear-gradient(to bottom, #d0bdf4, #a0d2eb);
+  color: #373b4c;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  animation: fadeOut 1s ease;
+  animation-fill-mode: forwards;
+  animation-delay: 2s; /* Change to how long you want the message to stay */
+}
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    display: none; /* Hide the element when the animation is complete */
+  }
+}
+
+.login-form {
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+.form-row {
+  display: contents;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+}
+
+.grid-container label {
+  grid-column: 1 / 2;
+  padding-right: 1rem; /* Spacing between label and input */
+  align-self: center;
+}
+
+.grid-container input {
+  grid-column: 2 / 3;
+  padding: 5px;
+  border-bottom: 1px solid #ccc;
+  width: 20%;
 }
 
 * {

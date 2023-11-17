@@ -3,9 +3,9 @@ import Togglable from "./components/Togglable";
 import LoginForm from "./components/LoginForm";
 import loginService from "./services/login";
 import taskService from "./services/tasks";
-import Notification from "./components/Notification";
 import Task from "./components/Task";
 import AddTaskForm from "./components/AddTaskForm";
+import ConfirmModal from "./components/ConfirmModal";
 
 import "./App.css";
 import "./Task.css";
@@ -17,6 +17,47 @@ function App() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [newFilter, setNewFilter] = useState("");
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
+
+  const handleLogoutClick = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const handleConfirmLogout = () => {
+    window.localStorage.removeItem("loggedAppUser");
+    setUser(null);
+    setIsLogoutModalOpen(false);
+  };
+
+  const handleCloseModal = () => {
+    setIsLogoutModalOpen(false);
+  };
+
+  const handleDeleteTaskClick = (task) => {
+    setTaskToDelete(task);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (taskToDelete) {
+      try {
+        await taskService.remove(taskToDelete.id);
+        const updatedTasks = await taskService.getAll();
+        setTasks(updatedTasks);
+      } catch (error) {
+        console.error("Error deleting the task:", error);
+      }
+    }
+    setIsDeleteModalOpen(false);
+    setTaskToDelete(null);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setTaskToDelete(null);
+  };
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedAppUser");
@@ -74,7 +115,7 @@ function App() {
       setErrorMessage(exception.response.data.error);
       setTimeout(() => {
         setErrorMessage(null);
-      }, 4000);
+      }, 3000);
       console.log(exception);
     }
   };
@@ -133,27 +174,17 @@ function App() {
 
   const addTask = (task) => {
     if (!checkLoginStatus()) {
-      console.log(task.content);
       if (task.content !== null) {
         taskService.create(task).then((returnedTask) => {
-          console.log(returnedTask);
           setTasks(tasks.concat(returnedTask));
         });
       }
     }
   };
 
-  const deleteTask = async (task) => {
+  const deleteTask = (task) => {
     if (!checkLoginStatus()) {
-      if (window.confirm("Are you sure you want to delete this task?")) {
-        try {
-          await taskService.remove(task.id);
-          const updatedTasks = await taskService.getAll();
-          setTasks(updatedTasks);
-        } catch (error) {
-          console.error("Error deleting the task:", error);
-        }
-      }
+      handleDeleteTaskClick(task);
     }
   };
 
@@ -176,18 +207,7 @@ function App() {
   const renderLogout = () => {
     return (
       <div className="logOut">
-        <button
-          onClick={() => {
-            if (
-              window.confirm(`Are you sure you want to log out ${user.name}?`)
-            ) {
-              window.localStorage.removeItem("loggedAppUser");
-              setUser(null);
-            }
-          }}
-        >
-          Log out
-        </button>
+        <button onClick={handleLogoutClick}>Log out</button>
       </div>
     );
   };
@@ -264,13 +284,33 @@ function App() {
 
   return (
     <div className="w-screen">
-      <div className="flex fixed z-100 top-0 w-full justify-between pl-1 h-15 items-center bg-[#373b4c] border-solid border-[#a0d2eb] border-b">
+      <div className="flex fixed z-100 top-0 w-full justify-between pl-3 h-15 items-center bg-[#31343f] border-solid border-[#a0d2eb] border-b">
         <div className="invofindHeading">InvoFind 🔍</div>
         {user !== null && renderLogout()}
       </div>
 
+      <ConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmLogout}
+        message="Are you sure you want to log out?"
+      />
+
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        message="Are you sure you want to delete this task?"
+      />
+
+      {errorMessage && (
+        <div className="error-overlay">
+          <div className="error-message">{errorMessage.toProperCase()}</div>
+        </div>
+      )}
+
       <div className="content">
-        <Notification message={errorMessage} />
+        {/* <Notification message={errorMessage} /> */}
         {user === null && renderLogin()}
         {user !== null && showSample()}
       </div>
