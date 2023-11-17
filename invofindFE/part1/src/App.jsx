@@ -83,6 +83,12 @@ function App() {
     return task.content.toUpperCase().includes(newFilter.toUpperCase());
   });
 
+  String.prototype.toProperCase = function () {
+    return this.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  };
+
   const showTasks = () => {
     return (
       <div className="allTasks">
@@ -92,22 +98,24 @@ function App() {
           onChange={(event) => setNewFilter(event.target.value)}
           value={newFilter}
           placeholder={"Filter Tasks"}
-        ></input>
-        {filteredTasks.map((task) => (
-          <div key={task.id} className="individualTask">
-            {" "}
-            {/* Key should be here */}
-            <h4>{task.title}</h4>
-            <div className="nextTo">
-              <Task
-                task={task}
-                markResolved={markResolved}
-                user={user}
-                deleteTask={deleteTask}
-              />
-            </div>
-          </div>
-        ))}
+        />
+        <div className="flex justify-center w-full">
+          <table className="w-full">
+            <tbody>
+              {filteredTasks.map((task) => (
+                <tr key={task.id}>
+                  <td>{task.content.toProperCase()}</td>
+                  <Task
+                    task={task}
+                    markResolved={markResolved}
+                    user={user}
+                    deleteTask={deleteTask}
+                  />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   };
@@ -219,13 +227,22 @@ function App() {
     return (
       <div className="rendering">
         <div className="tab">
-          <button className="tablinks" onClick={() => openInfo(event, "Info1")}>
+          <button
+            className="tablinks"
+            onClick={(event) => openInfo(event, "Info1")}
+          >
             Tasks
           </button>
-          <button className="tablinks" onClick={() => openInfo(event, "Info2")}>
+          <button
+            className="tablinks"
+            onClick={(event) => openInfo(event, "Info2")}
+          >
             Items
           </button>
-          <button className="tablinks" onClick={() => openInfo(event, "Info3")}>
+          <button
+            className="tablinks"
+            onClick={(event) => openInfo(event, "Info3")}
+          >
             Issues
           </button>
         </div>
@@ -235,13 +252,11 @@ function App() {
         </div>
 
         <div id="Info2" className="tabcontent">
-          <h3>Option 2</h3>
-          <p>Information about Option 2.</p>
+          <h1>Items</h1>
         </div>
 
         <div id="Info3" className="tabcontent">
-          <h3>Option 3</h3>
-          <p>Information about Option 3.</p>
+          <h1>Issues</h1>
         </div>
       </div>
     );
@@ -249,7 +264,7 @@ function App() {
 
   return (
     <div className="w-screen">
-      <div className="banner">
+      <div className="flex fixed z-100 top-0 w-full justify-between pl-1 h-15 items-center bg-[#373b4c] border-solid border-[#a0d2eb] border-b">
         <div className="invofindHeading">InvoFind 🔍</div>
         {user !== null && renderLogout()}
       </div>

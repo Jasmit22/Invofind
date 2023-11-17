@@ -58,16 +58,6 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
 /* Style for text inputs */
 input {
   font-family: "Raleway", Helvetica, Inter, system-ui, Avenir, Arial, sans-serif;
@@ -86,21 +76,6 @@ input:focus {
 }
 .filterTasks {
   margin-bottom: 1.5em;
-}
-
-.banner {
-  display: flex;
-  position: fixed;
-  z-index: 100;
-  top: 0;
-  border-bottom: 2px solid #a0d2eb;
-  width: 100%;
-  justify-content: space-between;
-  padding-left: 10px;
-  height: 4em;
-  /* background: linear-gradient(to bottom, #8458b3, #517283); */
-  align-items: center;
-  background-color: #373b4c;
 }
 
 .error {
@@ -155,7 +130,6 @@ input:focus {
   background-color: #a0d2eb;
   color: #373b4c;
   margin-bottom: 1em;
-  /* width: 100%; */
 }
 
 .allTasks {
@@ -196,7 +170,7 @@ input:focus {
   border-radius: 10rem;
   margin-bottom: 1rem;
   width: 100%;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
 }
 
 /* Style the buttons inside the tab */
@@ -209,16 +183,19 @@ input:focus {
   padding: 14px 16px;
   transition: 0.3s;
   width: 33%;
+  padding: 0.7rem;
+  margin: 0;
 }
 
 /* Change background color of buttons on hover */
 .tab button:hover {
-  background-color: #ddd;
+  background-color: #6c6f7e;
 }
 
 /* Create an active/current tablink class */
 .tab button.active {
-  background-color: #ccc;
+  background: linear-gradient(to bottom, #d0bdf4, #a0d2eb);
+  color: #373b4c;
 }
 
 /* Style the tab content */
