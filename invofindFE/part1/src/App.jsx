@@ -94,12 +94,12 @@ function App() {
           placeholder={"Filter Tasks"}
         ></input>
         {filteredTasks.map((task) => (
-          // eslint-disable-next-line react/jsx-key
-          <div className="individualTask">
+          <div key={task.id} className="individualTask">
+            {" "}
+            {/* Key should be here */}
             <h4>{task.title}</h4>
             <div className="nextTo">
               <Task
-                key={task.id}
                 task={task}
                 markResolved={markResolved}
                 user={user}
@@ -125,10 +125,13 @@ function App() {
 
   const addTask = (task) => {
     if (!checkLoginStatus()) {
-      taskService.create(task).then((returnedTask) => {
-        console.log(returnedTask);
-        setTasks(tasks.concat(returnedTask));
-      });
+      console.log(task.content);
+      if (task.content !== null) {
+        taskService.create(task).then((returnedTask) => {
+          console.log(returnedTask);
+          setTasks(tasks.concat(returnedTask));
+        });
+      }
     }
   };
 
@@ -191,8 +194,61 @@ function App() {
     );
   };
 
+  function openInfo(evt, infoName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(infoName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
+  const showSample = () => {
+    return (
+      <div className="rendering">
+        <div className="tab">
+          <button className="tablinks" onClick={() => openInfo(event, "Info1")}>
+            Tasks
+          </button>
+          <button className="tablinks" onClick={() => openInfo(event, "Info2")}>
+            Items
+          </button>
+          <button className="tablinks" onClick={() => openInfo(event, "Info3")}>
+            Issues
+          </button>
+        </div>
+
+        <div id="Info1" className="tabcontent">
+          {showTasks()}
+        </div>
+
+        <div id="Info2" className="tabcontent">
+          <h3>Option 2</h3>
+          <p>Information about Option 2.</p>
+        </div>
+
+        <div id="Info3" className="tabcontent">
+          <h3>Option 3</h3>
+          <p>Information about Option 3.</p>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div>
+    <div className="w-screen">
       <div className="banner">
         <div className="invofindHeading">InvoFind 🔍</div>
         {user !== null && renderLogout()}
@@ -201,7 +257,7 @@ function App() {
       <div className="content">
         <Notification message={errorMessage} />
         {user === null && renderLogin()}
-        {user !== null && showTasks()}
+        {user !== null && showSample()}
       </div>
     </div>
   );

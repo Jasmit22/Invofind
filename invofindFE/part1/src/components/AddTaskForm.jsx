@@ -6,17 +6,19 @@ const AddTaskForm = ({ createTask }) => {
 
   const addTask = (event) => {
     event.preventDefault();
-    createTask({
-      content: content,
-      resolved: false,
-    });
+    if (content !== null) {
+      createTask({
+        content: content,
+        resolved: false,
+      });
 
-    setContent("");
+      setContent("");
+    }
   };
 
   return (
     <div>
-      <h2>Add a Task</h2>
+      <h2 className="text-2xl font-bold pb-3">Add a Task</h2>
       <form onSubmit={addTask}>
         <div>
           Content

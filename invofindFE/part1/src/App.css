@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   font-family: "Raleway", Helvetica, Inter, system-ui, Avenir, Arial, sans-serif;
   line-height: 1.5;
@@ -16,9 +20,10 @@ a {
   text-decoration: none;
 }
 
-body {
+html body {
   display: flex;
   margin: 0;
+  width: 100%;
 }
 
 .content {
@@ -43,6 +48,7 @@ button {
   font-size: 0.9em;
   font-weight: 700;
   border: 2px solid transparent;
+  margin: 0.2em 0em;
 }
 button:hover {
   border-color: #a0d2eb;
@@ -79,7 +85,7 @@ input:focus {
   background-color: transparent;
 }
 .filterTasks {
-  padding-top: 1.5em;
+  margin-bottom: 1.5em;
 }
 
 .banner {
@@ -92,8 +98,9 @@ input:focus {
   justify-content: space-between;
   padding-left: 10px;
   height: 4em;
-  background: linear-gradient(to bottom, #8458b3, #517283);
+  /* background: linear-gradient(to bottom, #8458b3, #517283); */
   align-items: center;
+  background-color: #373b4c;
 }
 
 .error {
@@ -145,13 +152,16 @@ input:focus {
 }
 
 .addTask button {
-  margin-top: 1em;
   background-color: #a0d2eb;
   color: #373b4c;
+  margin-bottom: 1em;
+  /* width: 100%; */
 }
 
 .allTasks {
-  height: 30em;
+  align-items: center;
+  padding: 1.7rem;
+  height: 50rem;
   overflow: auto;
   scrollbar-width: thin; /* For Firefox */
   scrollbar-color: #a0d2eb #ffffff; /* For Firefox */
@@ -171,4 +181,63 @@ input:focus {
     border-radius: 6px;
     margin-right: 8px; /* Adjust the margin to move it to the right */
   }
+}
+
+.rendering {
+  margin: 0rem 5rem;
+}
+
+.tab {
+  display: flex;
+  justify-content: space-between; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  overflow: hidden;
+  background-color: #282a33;
+  border-radius: 10rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  font-size: 1.3rem;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  width: 33%;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border-top: none;
+  background-color: #282a33;
+  border-radius: 2rem;
+}
+
+/* Optional: Clear floats after the tabs */
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+* {
+  /* border: 1px solid red; */
+  /* width: 100%; */
 }

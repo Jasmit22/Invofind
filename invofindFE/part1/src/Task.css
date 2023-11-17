@@ -4,10 +4,6 @@
   display: inline-flex;
 }
 
-.taskTitle {
-  font-size: 1.2em;
-}
-
 .resolveButton {
   color: white;
   padding: 6px;

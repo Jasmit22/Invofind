@@ -15,9 +15,15 @@ const Task = ({ task, markResolved, user, deleteTask }) => {
     );
   };
 
+  String.prototype.toProperCase = function () {
+    return this.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  };
+
   return (
     <div className={"taskContainer"}>
-      <h4 className={"taskTitle"}>{task.content}</h4>
+      <h4 className="text-lg">{task.content.toProperCase()}</h4>
       <button
         className={"resolveButton"}
         style={{
