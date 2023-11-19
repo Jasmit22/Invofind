@@ -2,9 +2,9 @@ const { Model, DataTypes } = require("sequelize");
 
 const { sequelize } = require("../util/db");
 
-class User extends Model {}
+class Employee extends Model {}
 
-User.init(
+Employee.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -28,21 +28,15 @@ User.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    disabled: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
   },
   {
     sequelize,
     underscored: true,
     timestamps: false,
-    modelName: "user",
+    modelName: "employee",
 
     defaultScope: {
-      where: {
-        disabled: false,
-      },
+      // where: {},
     },
     scopes: {
       admin: {
@@ -50,13 +44,8 @@ User.init(
           admin: true,
         },
       },
-      disabled: {
-        where: {
-          disabled: true,
-        },
-      },
     },
   }
 );
 
-module.exports = User;
+module.exports = Employee;

@@ -6,15 +6,17 @@ class Store extends Model {}
 
 Store.init(
   {
-    id: {
-      type: DataTypes.INTEGER,
+    location: {
       primaryKey: true,
-      autoIncrement: true,
-    },
-    name: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+    },
+    company_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: { model: "companies", key: "id" },
+      onDelete: "CASCADE",
     },
   },
   {

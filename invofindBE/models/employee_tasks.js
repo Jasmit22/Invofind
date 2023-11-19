@@ -2,9 +2,9 @@ const { Model, DataTypes } = require("sequelize");
 
 const { sequelize } = require("../util/db");
 
-class Membership extends Model {}
+class EmployeeTasks extends Model {}
 
-Membership.init(
+EmployeeTasks.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -14,20 +14,20 @@ Membership.init(
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: "users", key: "id" },
+      references: { model: "employees", key: "id" },
     },
-    storeId: {
+    taskId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: "teams", key: "id" },
+      references: { model: "tasks", key: "id" },
     },
   },
   {
     sequelize,
     underscored: true,
     timestamps: false,
-    modelName: "membership",
+    modelName: "employee_tasks",
   }
 );
 
-module.exports = Membership;
+module.exports = EmployeeTasks;

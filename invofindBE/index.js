@@ -6,16 +6,20 @@ const { connectToDatabase } = require("./util/db");
 
 const middleware = require("./util/middleware");
 const tasksRouter = require("./controllers/tasks");
-const usersRouter = require("./controllers/users");
+const employeesRouter = require("./controllers/employees");
 const loginRouter = require("./controllers/login");
+const storesRouter = require("./controllers/stores");
+const companiesRouter = require("./controllers/companies");
 const cors = require("cors");
 app.use(cors());
 
 app.use(express.json());
 
 app.use("/api/tasks", tasksRouter);
-app.use("/api/users", usersRouter);
+app.use("/api/employees", employeesRouter);
 app.use("/api/login", loginRouter);
+app.use("/api/stores", storesRouter);
+app.use("/api/companies", companiesRouter);
 
 app.use(express.static("dist"));
 

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { Task, User } = require("../models");
+const { Task, Employee } = require("../models");
 const { Op } = require("sequelize");
 const { tokenExtractor } = require("../util/middleware");
 
@@ -14,10 +14,10 @@ router.get("/", async (req, res) => {
     };
   }
   const tasks = await Task.findAll({
-    attributes: { exclude: ["userId"] },
+    attributes: { exclude: ["employeeId"] },
     include: {
-      model: User,
-      attributes: ["name"],
+      model: Employee,
+      attributes: ["name", "id", "store_location"],
     },
     where,
   });
@@ -26,10 +26,10 @@ router.get("/", async (req, res) => {
 
 router.post("/", tokenExtractor, async (req, res) => {
   try {
-    const user = await User.findByPk(req.decodedToken.id);
+    const employee = await Employee.findByPk(req.decodedToken.id);
     const task = await Task.create({
       ...req.body,
-      userId: user.id,
+      employeeId: employee.id,
       date: new Date(),
     });
     res.json(task);

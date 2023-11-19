@@ -23,7 +23,7 @@ module.exports = {
         type: DataTypes.DATE,
       },
     });
-    await queryInterface.createTable("users", {
+    await queryInterface.createTable("employees", {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -43,14 +43,14 @@ module.exports = {
         allowNull: false,
       },
     });
-    await queryInterface.addColumn("tasks", "user_id", {
+    await queryInterface.addColumn("tasks", "employee_id", {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: "users", key: "id" },
+      references: { model: "employees", key: "id" },
     });
   },
   down: async ({ context: queryInterface }) => {
     await queryInterface.dropTable("tasks");
-    await queryInterface.dropTable("users");
+    await queryInterface.dropTable("employees");
   },
 };

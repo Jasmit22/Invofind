@@ -33,6 +33,8 @@ function App() {
 
   const handleCloseModal = () => {
     setIsLogoutModalOpen(false);
+    setIsDeleteModalOpen(false);
+    setTaskToDelete(null);
   };
 
   const handleDeleteTaskClick = (task) => {
@@ -44,17 +46,11 @@ function App() {
     if (taskToDelete) {
       try {
         await taskService.remove(taskToDelete.id);
-        const updatedTasks = await taskService.getAll();
-        setTasks(updatedTasks);
+        fetchTasks();
       } catch (error) {
         console.error("Error deleting the task:", error);
       }
     }
-    setIsDeleteModalOpen(false);
-    setTaskToDelete(null);
-  };
-
-  const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setTaskToDelete(null);
   };
@@ -82,11 +78,21 @@ function App() {
     }
   }, []);
 
+  const fetchTasks = () => {
+    if (user) {
+      taskService.getAll().then((allTasks) => {
+        const userStoreLocation = user.store_location; // Assuming this is how you store the user's store location
+        const tasksForUserStore = allTasks.filter(
+          (task) => task.employee.store_location === userStoreLocation
+        );
+        setTasks(tasksForUserStore);
+      });
+    }
+  };
+
   useEffect(() => {
-    taskService.getAll().then((tasks) => {
-      setTasks([...tasks]);
-    });
-  }, []);
+    fetchTasks();
+  }, [user]);
 
   const checkLoginStatus = () => {
     const decode = JSON.parse(atob(user.token.split(".")[1]));
@@ -94,6 +100,9 @@ function App() {
       window.localStorage.removeItem("loggedAppUser");
       setUser(null);
       setErrorMessage("Session Timed Out. Please Log In Again.");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 3000);
       return true;
     }
     return false;
@@ -168,7 +177,7 @@ function App() {
 
       await taskService.update(task.id, newTask);
 
-      taskService.getAll().then((tasks) => setTasks([...tasks]));
+      fetchTasks();
     }
   };
 
@@ -298,7 +307,7 @@ function App() {
 
       <ConfirmModal
         isOpen={isDeleteModalOpen}
-        onClose={handleCloseDeleteModal}
+        onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
         message="Are you sure you want to delete this task?"
       />
@@ -310,7 +319,6 @@ function App() {
       )}
 
       <div className="content">
-        {/* <Notification message={errorMessage} /> */}
         {user === null && renderLogin()}
         {user !== null && showSample()}
       </div>

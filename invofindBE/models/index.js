@@ -1,23 +1,43 @@
 const Task = require("./task");
-const User = require("./user");
+const Employee = require("./employee");
 const Store = require("./store");
-const Membership = require("./membership");
+const Company = require("./company");
 
-const UserTasks = require("./user_tasks");
+const EmployeeTasks = require("./employee_tasks");
 
-Task.belongsTo(User);
-User.hasMany(Task);
+// Company and Stores
+Company.hasMany(Store, {
+  foreignKey: "company_id",
+  as: "stores",
+});
+Store.belongsTo(Company, {
+  foreignKey: "company_id",
+  as: "company",
+});
 
-User.belongsToMany(Store, { through: Membership });
-Store.belongsToMany(User, { through: Membership });
+// Store and Employee
+Store.hasMany(Employee, {
+  foreignKey: "store_location",
+  as: "employees",
+});
+Employee.belongsTo(Store, {
+  foreignKey: "store_location",
+  as: "store",
+});
 
-User.belongsToMany(Task, { through: UserTasks, as: "marked_tasks" });
-Task.belongsToMany(User, { through: UserTasks, as: "users_marked" });
+// Employee and Task
+Task.belongsTo(Employee);
+Employee.hasMany(Task);
+
+Employee.belongsToMany(Task, { through: EmployeeTasks, as: "marked_tasks" });
+Task.belongsToMany(Employee, {
+  through: EmployeeTasks,
+  as: "employees_marked",
+});
 
 module.exports = {
   Task,
-  User,
+  Employee,
+  EmployeeTasks,
   Store,
-  Membership,
-  UserTasks,
 };

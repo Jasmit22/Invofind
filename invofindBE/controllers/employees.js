@@ -1,95 +1,95 @@
 const bcrypt = require("bcrypt");
 const router = require("express").Router();
 const { tokenExtractor } = require("../util/middleware");
-const { User, Task, Store } = require("../models");
+const { Employee, Task, Store } = require("../models");
 
 router.get("/", async (req, res) => {
-  const users = await User.findAll({
+  const employees = await Employee.findAll({
+    attributes: { exclude: ["passwordHash"] },
     include: [
       {
         model: Task,
-        attributes: { exclude: ["userId"] },
-      },
-      {
-        model: Store,
-        attributes: ["name", "id"],
-        through: {
-          attributes: [],
-        },
+        attributes: { exclude: ["employeeId"] },
       },
     ],
   });
-  res.json(users);
+  res.json(employees);
 });
 
 router.post("/", async (req, res) => {
   try {
-    const { username, name, password, admin } = req.body;
+    const { username, name, password, admin, store_location } = req.body;
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
-    const user = await User.create({ username, name, passwordHash, admin });
-    res.json(user);
+    const employee = await Employee.create({
+      username,
+      name,
+      passwordHash,
+      admin,
+      store_location,
+    });
+    res.json(employee);
   } catch (error) {
     return res.status(400).json({ error });
   }
 });
 
 router.get("/:id", async (req, res) => {
-  const user = await User.findByPk(req.params.id, {
+  const employee = await Employee.findByPk(req.params.id, {
     attributes: { exclude: [""] },
     include: [
       {
         model: Task,
-        attributes: { exclude: ["userId"] },
+        attributes: { exclude: ["employeeId"] },
       },
       {
         model: Task,
         as: "marked_tasks",
-        attributes: { exclude: ["userId"] },
+        attributes: { exclude: ["employeeId"] },
         through: {
           attributes: [],
         },
         include: {
-          model: User,
+          model: Employee,
           attributes: ["name"],
         },
       },
     ],
   });
 
-  if (!user) {
+  if (!employee) {
     return res.status(404).end();
   }
 
   let stores = undefined;
   if (req.query.stores) {
-    stores = await user.getStores({
-      attributes: ["name"],
+    stores = await employee.getStores({
+      attributes: ["location"],
       joinTableAttributes: [],
     });
   }
-  res.json({ ...user.toJSON(), stores });
+  res.json({ ...employee.toJSON(), stores });
 });
 
 const isAdmin = async (req, res, next) => {
-  const user = await User.findByPk(req.decodedToken.id);
-  if (!user.admin) {
+  const employee = await Employee.findByPk(req.decodedToken.id);
+  if (!employee.admin) {
     return res.status(401).json({ error: "operation not allowed" });
   }
   next();
 };
 
 router.put("/:username", tokenExtractor, isAdmin, async (req, res) => {
-  const user = await User.findOne({
+  const employee = await Employee.findOne({
     where: {
       username: req.params.username,
     },
   });
 
-  if (user) {
-    user.disabled = req.body.disabled;
-    await user.save();
-    res.json(user);
+  if (employee) {
+    employee.disabled = req.body.disabled;
+    await employee.save();
+    res.json(employee);
   } else {
     res.status(404).end();
   }
