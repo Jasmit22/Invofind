@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const router = require("express").Router();
 const { tokenExtractor } = require("../util/middleware");
-const { Employee, Task, Store } = require("../models");
+const { Employee, Task, Store, Issue } = require("../models");
 
 router.get("/", async (req, res) => {
   const employees = await Employee.findAll({
@@ -9,6 +9,10 @@ router.get("/", async (req, res) => {
     include: [
       {
         model: Task,
+        attributes: { exclude: ["employeeId"] },
+      },
+      {
+        model: Issue,
         attributes: { exclude: ["employeeId"] },
       },
     ],
@@ -43,16 +47,8 @@ router.get("/:id", async (req, res) => {
         attributes: { exclude: ["employeeId"] },
       },
       {
-        model: Task,
-        as: "marked_tasks",
+        model: Issue,
         attributes: { exclude: ["employeeId"] },
-        through: {
-          attributes: [],
-        },
-        include: {
-          model: Employee,
-          attributes: ["name"],
-        },
       },
     ],
   });

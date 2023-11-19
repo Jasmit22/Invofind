@@ -10,6 +10,7 @@ const employeesRouter = require("./controllers/employees");
 const loginRouter = require("./controllers/login");
 const storesRouter = require("./controllers/stores");
 const companiesRouter = require("./controllers/companies");
+const issuesRouter = require("./controllers/issues");
 const cors = require("cors");
 app.use(cors());
 
@@ -20,6 +21,7 @@ app.use("/api/employees", employeesRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/stores", storesRouter);
 app.use("/api/companies", companiesRouter);
+app.use("/api/issues", issuesRouter);
 
 app.use(express.static("dist"));
 

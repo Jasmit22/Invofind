@@ -2,8 +2,7 @@ const Task = require("./task");
 const Employee = require("./employee");
 const Store = require("./store");
 const Company = require("./company");
-
-const EmployeeTasks = require("./employee_tasks");
+const Issue = require("./issue");
 
 // Company and Stores
 Company.hasMany(Store, {
@@ -29,15 +28,12 @@ Employee.belongsTo(Store, {
 Task.belongsTo(Employee);
 Employee.hasMany(Task);
 
-Employee.belongsToMany(Task, { through: EmployeeTasks, as: "marked_tasks" });
-Task.belongsToMany(Employee, {
-  through: EmployeeTasks,
-  as: "employees_marked",
-});
+Issue.belongsTo(Employee);
+Employee.hasMany(Issue);
 
 module.exports = {
   Task,
   Employee,
-  EmployeeTasks,
   Store,
+  Issue,
 };

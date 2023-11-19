@@ -2,32 +2,36 @@ const { Model, DataTypes } = require("sequelize");
 
 const { sequelize } = require("../util/db");
 
-class EmployeeTasks extends Model {}
+class Issue extends Model {}
 
-EmployeeTasks.init(
+Issue.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    userId: {
-      type: DataTypes.INTEGER,
+    description: {
+      type: DataTypes.STRING(100),
       allowNull: false,
-      references: { model: "employees", key: "id" },
+      validate: {
+        len: [1, 100], // Set the maximum length
+      },
     },
-    taskId: {
-      type: DataTypes.INTEGER,
+    resolved: {
+      type: DataTypes.BOOLEAN,
       allowNull: false,
-      references: { model: "tasks", key: "id" },
+    },
+    dateResolved: {
+      type: DataTypes.DATE,
     },
   },
   {
     sequelize,
     underscored: true,
     timestamps: false,
-    modelName: "employee_tasks",
+    modelName: "issue",
   }
 );
 
-module.exports = EmployeeTasks;
+module.exports = Issue;
