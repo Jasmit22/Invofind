@@ -1,13 +1,15 @@
 import React from "react";
 
-const Task = ({ task, markResolved, user, deleteTask }) => {
+const Issue = ({ issue, markResolved, user, deleteIssue }) => {
   const renderDelete = () => {
     return (
       <td className="text-center">
         <button
           className="text-white p-1.5 cursor-pointer ml-8 mr-6 border-2 border-transparent hover:border-[#a0d2eb]"
           style={{ backgroundColor: "#8458b3" }}
-          onClick={() => deleteTask(task)}
+          onClick={() => {
+            deleteIssue(issue);
+          }}
         >
           Delete
         </button>
@@ -21,12 +23,14 @@ const Task = ({ task, markResolved, user, deleteTask }) => {
         <button
           className="text-white p-1.5 cursor-pointer ml-8 border-2 border-transparent"
           style={{
-            backgroundColor: task.resolved ? "#4CAF50" : "#f44336",
+            backgroundColor: issue.resolved ? "#4CAF50" : "#f44336",
             transition: "background-color 0.3s ease",
           }}
-          onClick={() => markResolved(task)}
+          onClick={() => {
+            markResolved(issue);
+          }}
         >
-          {task.resolved ? "Make Unresolved" : "Mark Resolved"}
+          {issue.resolved ? "Make Unresolved" : "Mark Resolved"}
         </button>
       </td>
       {user.admin && renderDelete()}
@@ -34,4 +38,4 @@ const Task = ({ task, markResolved, user, deleteTask }) => {
   );
 };
 
-export default Task;
+export default Issue;

@@ -28,7 +28,7 @@ const AddTaskForm = ({ createTask }) => {
             style={{ marginLeft: "10px" }}
           />
         </div>
-        <button className="submitButton" type="submit">
+        <button className="bg-[#a0d2eb] text-[#373b4c] mb-4" type="submit">
           Submit
         </button>
         <br></br>

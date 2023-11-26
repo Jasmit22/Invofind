@@ -31,7 +31,7 @@ const LoginForm = ({
             />
           </div>
         </div>
-        <button className="submitButton" type="submit">
+        <button className="bg-[#a0d2eb] text-[#373b4c] mb-4" type="submit">
           Login
         </button>
       </form>

@@ -3,12 +3,14 @@ import Togglable from "./components/Togglable";
 import LoginForm from "./components/LoginForm";
 import loginService from "./services/login";
 import taskService from "./services/tasks";
+import issueService from "./services/issues";
 import Task from "./components/Task";
+import Issue from "./components/Issue";
 import AddTaskForm from "./components/AddTaskForm";
+import AddIssueForm from "./components/AddIssueForm";
 import ConfirmModal from "./components/ConfirmModal";
 
 import "./App.css";
-import "./Task.css";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -16,10 +18,14 @@ function App() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [newFilter, setNewFilter] = useState("");
+  const [newIssueFilter, setNewIssueFilter] = useState("");
+  const [newTaskFilter, setNewTaskFilter] = useState("");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
+  const [isDeleteIssueModalOpen, setIsDeleteIssueModalOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
+  const [issues, setIssues] = useState([]);
+  const [issueToDelete, setIssueToDelete] = useState(null);
 
   const handleLogoutClick = () => {
     setIsLogoutModalOpen(true);
@@ -33,13 +39,15 @@ function App() {
 
   const handleCloseModal = () => {
     setIsLogoutModalOpen(false);
-    setIsDeleteModalOpen(false);
+    setIsDeleteTaskModalOpen(false);
+    setIsDeleteIssueModalOpen(false);
     setTaskToDelete(null);
+    setIssueToDelete(null);
   };
 
   const handleDeleteTaskClick = (task) => {
     setTaskToDelete(task);
-    setIsDeleteModalOpen(true);
+    setIsDeleteTaskModalOpen(true);
   };
 
   const handleConfirmDelete = async () => {
@@ -51,8 +59,19 @@ function App() {
         console.error("Error deleting the task:", error);
       }
     }
-    setIsDeleteModalOpen(false);
+    setIsDeleteTaskModalOpen(false);
     setTaskToDelete(null);
+
+    if (issueToDelete) {
+      try {
+        await issueService.remove(issueToDelete.id);
+        fetchIssues();
+      } catch (error) {
+        console.error("Error deleting the issue:", error);
+      }
+    }
+    setIsDeleteIssueModalOpen(false);
+    setIssueToDelete(null);
   };
 
   useEffect(() => {
@@ -61,6 +80,7 @@ function App() {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
       taskService.setToken(user.token);
+      issueService.setToken(user.token);
     }
   }, []);
 
@@ -90,8 +110,24 @@ function App() {
     }
   };
 
+  const fetchIssues = () => {
+    if (user) {
+      issueService.getAll().then((allIssues) => {
+        const userStoreLocation = user.store_location; // Assuming this is how you store the user's store location
+        const issuesForUserStore = allIssues.filter(
+          (issue) => issue.employee.store_location === userStoreLocation
+        );
+        setIssues(issuesForUserStore);
+      });
+    }
+  };
+
   useEffect(() => {
     fetchTasks();
+  }, [user]);
+
+  useEffect(() => {
+    fetchIssues();
   }, [user]);
 
   const checkLoginStatus = () => {
@@ -130,7 +166,7 @@ function App() {
   };
 
   const filteredTasks = tasks.filter((task) => {
-    return task.content.toUpperCase().includes(newFilter.toUpperCase());
+    return task.content.toUpperCase().includes(newTaskFilter.toUpperCase());
   });
 
   String.prototype.toProperCase = function () {
@@ -141,12 +177,12 @@ function App() {
 
   const showTasks = () => {
     return (
-      <div className="allTasks">
+      <div className="allItems">
         {user !== null && user.admin && renderAddTask()}
         <input
-          className="filterTasks"
-          onChange={(event) => setNewFilter(event.target.value)}
-          value={newFilter}
+          className="filterItems mb-6"
+          onChange={(event) => setNewTaskFilter(event.target.value)}
+          value={newTaskFilter}
           placeholder={"Filter Tasks"}
         />
         <div className="flex justify-center w-full">
@@ -157,7 +193,7 @@ function App() {
                   <td>{task.content.toProperCase()}</td>
                   <Task
                     task={task}
-                    markResolved={markResolved}
+                    markResolved={markTaskResolved}
                     user={user}
                     deleteTask={deleteTask}
                   />
@@ -170,7 +206,7 @@ function App() {
     );
   };
 
-  const markResolved = async (task) => {
+  const markTaskResolved = async (task) => {
     if (!checkLoginStatus()) {
       const newTask = { ...task };
       newTask.resolved = !task.resolved;
@@ -197,6 +233,85 @@ function App() {
     }
   };
 
+  const filteredIssues = issues.filter((issue) => {
+    return issue.description
+      .toUpperCase()
+      .includes(newIssueFilter.toUpperCase());
+  });
+
+  const showIssues = () => {
+    return (
+      <div className="allItems">
+        {user !== null && user.admin && renderAddIssue()}
+        <input
+          className="filterItems mb-6"
+          onChange={(event) => setNewIssueFilter(event.target.value)}
+          value={newIssueFilter}
+          placeholder={"Filter Issues"}
+        />
+        <div className="flex justify-center w-full">
+          <table className="w-full">
+            <tbody>
+              {filteredIssues.map((issue) => (
+                <tr key={issue.id}>
+                  <td>{issue.description.toProperCase()}</td>
+                  <Issue
+                    issue={issue}
+                    markResolved={markIssueResolved}
+                    user={user}
+                    deleteIssue={deleteIssue}
+                  />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
+  const markIssueResolved = async (issue) => {
+    if (!checkLoginStatus()) {
+      const newIssue = { ...issue };
+      newIssue.resolved = !issue.resolved;
+
+      await issueService.update(issue.id, newIssue);
+
+      fetchIssues();
+    }
+  };
+
+  const renderAddIssue = () => {
+    return (
+      <div className="addIssue">
+        <Togglable buttonLabel="Add Issue">
+          <AddIssueForm createIssue={addIssue} />
+        </Togglable>
+      </div>
+    );
+  };
+
+  const addIssue = (issue) => {
+    if (!checkLoginStatus()) {
+      if (issue.description !== null) {
+        issueService.create(issue).then((returnedIssue) => {
+          setIssues(issues.concat(returnedIssue));
+        });
+      }
+    }
+  };
+
+  const deleteIssue = (issue) => {
+    if (!checkLoginStatus()) {
+      handleDeleteIssueClick(issue);
+    }
+  };
+
+  const handleDeleteIssueClick = (issue) => {
+    setIssueToDelete(issue);
+    setIsDeleteIssueModalOpen(true);
+  };
+
   const renderLogin = () => {
     return (
       <div>
@@ -215,7 +330,7 @@ function App() {
 
   const renderLogout = () => {
     return (
-      <div className="logOut">
+      <div className="mr-4">
         <button onClick={handleLogoutClick}>Log out</button>
       </div>
     );
@@ -254,7 +369,7 @@ function App() {
 
   const showSample = () => {
     return (
-      <div className="rendering">
+      <div className="mx-10">
         <div className="tab">
           <button
             className="tablinks"
@@ -281,11 +396,11 @@ function App() {
         </div>
 
         <div id="Info2" className="tabcontent">
-          <h1>Items</h1>
+          {<h1>Items</h1>}
         </div>
 
         <div id="Info3" className="tabcontent">
-          <h1>Issues</h1>
+          {showIssues()}
         </div>
       </div>
     );
@@ -306,10 +421,17 @@ function App() {
       />
 
       <ConfirmModal
-        isOpen={isDeleteModalOpen}
+        isOpen={isDeleteTaskModalOpen}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
         message="Are you sure you want to delete this task?"
+      />
+
+      <ConfirmModal
+        isOpen={isDeleteIssueModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmDelete}
+        message="Are you sure you want to delete this issue?"
       />
 
       {errorMessage && (

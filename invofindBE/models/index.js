@@ -3,6 +3,7 @@ const Employee = require("./employee");
 const Store = require("./store");
 const Company = require("./company");
 const Issue = require("./issue");
+const Department = require("./department");
 
 // Company and Stores
 Company.hasMany(Store, {
@@ -30,6 +31,10 @@ Employee.hasMany(Task);
 
 Issue.belongsTo(Employee);
 Employee.hasMany(Issue);
+
+// Store and Department
+Department.belongsTo(Store);
+Store.hasMany(Department);
 
 module.exports = {
   Task,
