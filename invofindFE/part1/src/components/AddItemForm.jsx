@@ -2,22 +2,29 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 
 const AddItemForm = ({ createItem, departments }) => {
-  const [content, setContent] = useState("");
+  const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
 
   const addItem = (event) => {
     event.preventDefault();
-    if (content) {
-      createItem({
-        // content: content,
-        // department: selectedDepartment,
-        // resolved: false,
-      });
+    if (name) {
+      const departmentObject = departments.find(
+        (dept) => dept.deptName === selectedDepartment
+      );
 
-      setContent("");
-      setSelectedDepartment(""); // Reset the department selection
+      createItem({
+        name: name,
+        price: price,
+        quantity: quantity,
+        departmentId: departmentObject.id,
+      });
+      setName("");
+      setPrice("");
+      setQuantity("");
+      setSelectedDepartment("");
+      //   window.location.reload();
     }
   };
 
@@ -29,8 +36,8 @@ const AddItemForm = ({ createItem, departments }) => {
           <label className="form-label">Item Name:</label>
           <input
             className="form-input"
-            value={content}
-            onChange={(event) => setContent(event.target.value)}
+            value={name}
+            onChange={(event) => setName(event.target.value)}
           />
         </div>
 
@@ -61,7 +68,9 @@ const AddItemForm = ({ createItem, departments }) => {
             id="itemSelect"
             name="items"
             value={selectedDepartment}
-            onChange={(event) => setSelectedDepartment(event.target.value)}
+            onChange={(event) => {
+              setSelectedDepartment(event.target.value);
+            }}
           >
             {departments.map((department, index) => (
               <option key={index} value={department.deptName}>

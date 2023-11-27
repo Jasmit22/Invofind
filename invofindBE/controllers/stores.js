@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
     include: [
       {
         model: Department,
-        attributes: { exclude: ["storeLocation", "id"] },
+        // DON'T EXCLUDE ANYTHING
       },
     ],
   });
@@ -32,7 +32,7 @@ router.get("/:id", async (req, res) => {
     include: [
       {
         model: Department,
-        attributes: { exclude: ["storeLocation", "id"] },
+        // DON'T EXCLUDE ANYTHING
       },
     ],
   });

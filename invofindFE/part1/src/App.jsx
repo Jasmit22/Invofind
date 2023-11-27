@@ -5,8 +5,10 @@ import loginService from "./services/login";
 import taskService from "./services/tasks";
 import issueService from "./services/issues";
 import storeService from "./services/stores";
+import itemService from "./services/items";
 import Task from "./components/Task";
 import Issue from "./components/Issue";
+import Item from "./components/Item";
 import AddTaskForm from "./components/AddTaskForm";
 import AddIssueForm from "./components/AddIssueForm";
 import AddItemForm from "./components/AddItemForm";
@@ -22,12 +24,16 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [newIssueFilter, setNewIssueFilter] = useState("");
   const [newTaskFilter, setNewTaskFilter] = useState("");
+  const [newItemFilter, setNewItemFilter] = useState("");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
   const [isDeleteIssueModalOpen, setIsDeleteIssueModalOpen] = useState(false);
+  const [isDeleteItemModalOpen, setIsDeleteItemModalOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
-  const [issues, setIssues] = useState([]);
   const [issueToDelete, setIssueToDelete] = useState(null);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [items, setItems] = useState([]);
+  const [issues, setIssues] = useState([]);
   const [departments, setDepartments] = useState([]);
 
   const handleLogoutClick = () => {
@@ -44,8 +50,10 @@ function App() {
     setIsLogoutModalOpen(false);
     setIsDeleteTaskModalOpen(false);
     setIsDeleteIssueModalOpen(false);
+    setIsDeleteItemModalOpen(false);
     setTaskToDelete(null);
     setIssueToDelete(null);
+    setItemToDelete(null);
   };
 
   const handleDeleteTaskClick = (task) => {
@@ -75,6 +83,17 @@ function App() {
     }
     setIsDeleteIssueModalOpen(false);
     setIssueToDelete(null);
+
+    if (itemToDelete) {
+      try {
+        await itemService.remove(itemToDelete.id);
+        fetchItems();
+      } catch (error) {
+        console.error("Error deleting the item:", error);
+      }
+    }
+    setIsDeleteItemModalOpen(false);
+    setItemToDelete(null);
   };
 
   useEffect(() => {
@@ -85,6 +104,7 @@ function App() {
       taskService.setToken(user.token);
       issueService.setToken(user.token);
       storeService.setToken(user.token);
+      itemService.setToken(user.token);
     }
   }, []);
 
@@ -136,6 +156,10 @@ function App() {
 
   useEffect(() => {
     fetchDepartments();
+  }, [user]);
+
+  useEffect(() => {
+    fetchItems();
   }, [user]);
 
   const checkLoginStatus = () => {
@@ -364,13 +388,18 @@ function App() {
     );
   };
 
-  const addItem = (issue) => {
+  const addItem = (item) => {
     if (!checkLoginStatus()) {
-      // if (issue.description !== null) {
-      //   issueService.create(issue).then((returnedIssue) => {
-      //     setIssues(issues.concat(returnedIssue));
-      //   });
-      // }
+      if (
+        item.name !== null &&
+        item.price !== null &&
+        item.quantity !== null &&
+        item.department !== null
+      ) {
+        itemService.create(item).then((returnedItem) => {
+          fetchItems(); // Need to do this, or else items don't get populated correctly.
+        });
+      }
     }
   };
 
@@ -382,15 +411,103 @@ function App() {
     }
   };
 
+  const fetchItems = () => {
+    if (user) {
+      itemService.getAll().then((allItems) => {
+        const userStoreLocation = user.store_location; // Assuming this is how you store the user's store location
+        const itemsForUserStore = allItems.filter(
+          (item) => item.department.storeLocation === userStoreLocation
+        );
+        setItems(itemsForUserStore);
+      });
+    }
+  };
+
   const showItems = () => {
     return (
       <div className="allItems">
-        <h1 className="text-red-700">
-          <b>NOT WORKING YET, JUST STRUCTURE ADDED</b>
-        </h1>
         {user !== null && user.admin && renderAddItem()}
+        <input
+          className="filterItems mb-6"
+          onChange={(event) => setNewItemFilter(event.target.value)}
+          value={newItemFilter}
+          placeholder={"Filter Items"}
+        />
+        <div className="flex justify-center w-full">
+          <table className="w-full">
+            <tbody>
+              <tr>
+                <td>
+                  <b>Name</b>
+                </td>
+                <td>
+                  <b>Price</b>
+                </td>
+                <td>
+                  <b>Quantity</b>
+                </td>
+                <td>
+                  <b>Department</b>
+                </td>
+              </tr>
+              {filteredItems.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.name.toProperCase()}</td>
+                  <td>{item.price.toProperCase()}</td>
+                  <td>{item.quantity}</td>
+                  <td>{item.department.deptName}</td>
+                  <Item
+                    item={item}
+                    user={user}
+                    deleteItem={deleteItem}
+                    add={addQuantity}
+                    subtract={subtractQuantity}
+                  />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
+  };
+
+  const addQuantity = async (item) => {
+    if (!checkLoginStatus()) {
+      const newItem = { ...item };
+      newItem.quantity = item.quantity + 1;
+
+      await itemService.update(item.id, newItem);
+
+      fetchItems();
+    }
+  };
+
+  const subtractQuantity = async (item) => {
+    if (!checkLoginStatus()) {
+      const newItem = { ...item };
+      newItem.quantity = item.quantity - 1;
+
+      await itemService.update(item.id, newItem);
+
+      fetchItems();
+    }
+  };
+
+  const filteredItems = items.filter((item) => {
+    // console.log(item.name);
+    return item.name.toUpperCase().includes(newItemFilter.toUpperCase());
+  });
+
+  const deleteItem = (item) => {
+    if (!checkLoginStatus()) {
+      handleDeleteItemClick(item);
+    }
+  };
+
+  const handleDeleteItemClick = (item) => {
+    setItemToDelete(item);
+    setIsDeleteItemModalOpen(true);
   };
 
   function openInfo(evt, infoName) {
@@ -479,6 +596,13 @@ function App() {
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
         message="Are you sure you want to delete this issue?"
+      />
+
+      <ConfirmModal
+        isOpen={isDeleteItemModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmDelete}
+        message="Are you sure you want to delete this item?"
       />
 
       {errorMessage && (

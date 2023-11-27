@@ -11,6 +11,7 @@ module.exports = {
       dept_name: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
       },
       store_location: {
         type: DataTypes.INTEGER,

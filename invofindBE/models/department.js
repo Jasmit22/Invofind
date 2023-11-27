@@ -14,6 +14,7 @@ Department.init(
     deptName: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     storeLocation: {
       type: DataTypes.INTEGER,
