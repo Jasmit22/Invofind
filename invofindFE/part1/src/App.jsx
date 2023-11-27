@@ -4,10 +4,12 @@ import LoginForm from "./components/LoginForm";
 import loginService from "./services/login";
 import taskService from "./services/tasks";
 import issueService from "./services/issues";
+import storeService from "./services/stores";
 import Task from "./components/Task";
 import Issue from "./components/Issue";
 import AddTaskForm from "./components/AddTaskForm";
 import AddIssueForm from "./components/AddIssueForm";
+import AddItemForm from "./components/AddItemForm";
 import ConfirmModal from "./components/ConfirmModal";
 
 import "./App.css";
@@ -26,6 +28,7 @@ function App() {
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [issues, setIssues] = useState([]);
   const [issueToDelete, setIssueToDelete] = useState(null);
+  const [departments, setDepartments] = useState([]);
 
   const handleLogoutClick = () => {
     setIsLogoutModalOpen(true);
@@ -81,6 +84,7 @@ function App() {
       setUser(user);
       taskService.setToken(user.token);
       issueService.setToken(user.token);
+      storeService.setToken(user.token);
     }
   }, []);
 
@@ -128,6 +132,10 @@ function App() {
 
   useEffect(() => {
     fetchIssues();
+  }, [user]);
+
+  useEffect(() => {
+    fetchDepartments();
   }, [user]);
 
   const checkLoginStatus = () => {
@@ -346,6 +354,45 @@ function App() {
     );
   };
 
+  const renderAddItem = () => {
+    return (
+      <div className="addItem">
+        <Togglable buttonLabel="Add Item">
+          <AddItemForm createItem={addItem} departments={departments} />
+        </Togglable>
+      </div>
+    );
+  };
+
+  const addItem = (issue) => {
+    if (!checkLoginStatus()) {
+      // if (issue.description !== null) {
+      //   issueService.create(issue).then((returnedIssue) => {
+      //     setIssues(issues.concat(returnedIssue));
+      //   });
+      // }
+    }
+  };
+
+  const fetchDepartments = () => {
+    if (user) {
+      storeService.getById(user.store_location).then((store) => {
+        setDepartments(store.departments);
+      });
+    }
+  };
+
+  const showItems = () => {
+    return (
+      <div className="allItems">
+        <h1 className="text-red-700">
+          <b>NOT WORKING YET, JUST STRUCTURE ADDED</b>
+        </h1>
+        {user !== null && user.admin && renderAddItem()}
+      </div>
+    );
+  };
+
   function openInfo(evt, infoName) {
     // Declare all variables
     var i, tabcontent, tablinks;
@@ -396,7 +443,7 @@ function App() {
         </div>
 
         <div id="Info2" className="tabcontent">
-          {<h1>Items</h1>}
+          {showItems()}
         </div>
 
         <div id="Info3" className="tabcontent">

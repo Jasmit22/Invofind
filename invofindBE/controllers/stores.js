@@ -27,4 +27,20 @@ router.get("/", async (req, res) => {
   res.json(stores);
 });
 
+router.get("/:id", async (req, res) => {
+  const store = await Store.findByPk(req.params.id, {
+    include: [
+      {
+        model: Department,
+        attributes: { exclude: ["storeLocation", "id"] },
+      },
+    ],
+  });
+
+  if (!store) {
+    return res.status(404).end();
+  }
+  res.json({ ...store.toJSON() });
+});
+
 module.exports = router;

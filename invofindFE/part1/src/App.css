@@ -215,6 +215,31 @@ input:focus {
   width: 20%;
 }
 
+.form-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+  width: 40%;
+  padding-bottom: 1rem;
+}
+
+.form-label {
+  padding-right: 1rem;
+  grid-column: 1 / 2;
+}
+
+.form-input {
+  grid-column: 2 / 3;
+  padding: 0.3rem;
+}
+
+.submit-btn {
+  grid-column: 2 / 3;
+  justify-self: start;
+  margin-top: 10px;
+}
+
 * {
   /* border: 1px solid red; */
   /* width: 100%; */
