@@ -149,6 +149,11 @@ input:focus {
   color: #373b4c;
 }
 
+.headerButtons {
+  background: linear-gradient(to bottom, #d0bdf4, #a0d2eb);
+  color: #373b4c;
+}
+
 .tabcontent {
   display: none;
   padding: 6px 12px;

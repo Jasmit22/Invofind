@@ -6,6 +6,7 @@ import taskService from "./services/tasks";
 import issueService from "./services/issues";
 import storeService from "./services/stores";
 import itemService from "./services/items";
+import employeeService from "./services/employees";
 import Task from "./components/Task";
 import Issue from "./components/Issue";
 import Item from "./components/Item";
@@ -13,6 +14,7 @@ import AddTaskForm from "./components/AddTaskForm";
 import AddIssueForm from "./components/AddIssueForm";
 import AddItemForm from "./components/AddItemForm";
 import ConfirmModal from "./components/ConfirmModal";
+import AddUserModal from "./components/AddUserModal";
 
 import "./App.css";
 
@@ -29,6 +31,7 @@ function App() {
   const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
   const [isDeleteIssueModalOpen, setIsDeleteIssueModalOpen] = useState(false);
   const [isDeleteItemModalOpen, setIsDeleteItemModalOpen] = useState(false);
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [issueToDelete, setIssueToDelete] = useState(null);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -51,6 +54,7 @@ function App() {
     setIsDeleteTaskModalOpen(false);
     setIsDeleteIssueModalOpen(false);
     setIsDeleteItemModalOpen(false);
+    setIsAddUserModalOpen(false);
     setTaskToDelete(null);
     setIssueToDelete(null);
     setItemToDelete(null);
@@ -363,7 +367,9 @@ function App() {
   const renderLogout = () => {
     return (
       <div className="mr-4">
-        <button onClick={handleLogoutClick}>Log out</button>
+        <button className="headerButtons" onClick={handleLogoutClick}>
+          Log out
+        </button>
       </div>
     );
   };
@@ -570,11 +576,35 @@ function App() {
     );
   };
 
+  const renderAddUser = () => {
+    return (
+      <div className="mr-4">
+        <button
+          className="headerButtons"
+          onClick={() => {
+            setIsAddUserModalOpen(true);
+          }}
+        >
+          Add Employee
+        </button>
+      </div>
+    );
+  };
+
+  const handleAddUser = (username, name, password, admin) => {
+    const store_location = user.store_location;
+    employeeService.create({ username, name, password, admin, store_location });
+    handleCloseModal();
+  };
+
   return (
     <div className="w-screen">
       <div className="flex fixed z-100 top-0 w-full justify-between pl-3 h-15 items-center bg-[#31343f] border-solid border-[#a0d2eb] border-b">
         <div className="invofindHeading">InvoFind 🔍</div>
-        {user !== null && renderLogout()}
+        <div className="flex">
+          {user !== null && user.admin && renderAddUser()}
+          {user !== null && renderLogout()}
+        </div>
       </div>
 
       <ConfirmModal
@@ -603,6 +633,13 @@ function App() {
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
         message="Are you sure you want to delete this item?"
+      />
+
+      <AddUserModal
+        isOpen={isAddUserModalOpen}
+        onClose={handleCloseModal}
+        onAdd={handleAddUser}
+        message="Add an Employee"
       />
 
       {errorMessage && (
