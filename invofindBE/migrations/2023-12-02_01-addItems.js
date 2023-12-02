@@ -32,6 +32,12 @@ module.exports = {
         references: { model: "departments", key: "id" },
         onDelete: "CASCADE",
       },
+      category_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: { model: "categories", key: "id" },
+        onDelete: "CASCADE",
+      },
     });
   },
   down: async ({ context: queryInterface }) => {

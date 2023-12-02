@@ -1,55 +1,46 @@
 const router = require("express").Router();
 
-const Department = require("../models/department");
-const Store = require("../models/store");
+const Item = require("../models/item");
 const Category = require("../models/category");
 
 router.post("/", async (req, res) => {
   try {
-    const store = await Store.create({
+    const category = await Category.create({
       ...req.body,
       date: new Date(),
     });
-    res.json(store);
+    res.json(category);
   } catch (error) {
     return res.status(400).json({ error });
   }
 });
 
 router.get("/", async (req, res) => {
-  const stores = await Store.findAll({
+  const categories = await Category.findAll({
     include: [
       {
-        model: Department,
-        // DON'T EXCLUDE ANYTHING
-      },
-      {
-        model: Category,
+        model: Item,
         // DON'T EXCLUDE ANYTHING
       },
     ],
   });
-  res.json(stores);
+  res.json(categories);
 });
 
 router.get("/:id", async (req, res) => {
-  const store = await Store.findByPk(req.params.id, {
+  const category = await Category.findByPk(req.params.id, {
     include: [
       {
-        model: Department,
-        // DON'T EXCLUDE ANYTHING
-      },
-      {
-        model: Category,
+        model: Item,
         // DON'T EXCLUDE ANYTHING
       },
     ],
   });
 
-  if (!store) {
+  if (!category) {
     return res.status(404).end();
   }
-  res.json({ ...store.toJSON() });
+  res.json({ ...category.toJSON() });
 });
 
 module.exports = router;

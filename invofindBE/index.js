@@ -13,6 +13,7 @@ const companiesRouter = require("./controllers/companies");
 const issuesRouter = require("./controllers/issues");
 const itemsRouter = require("./controllers/items");
 const departmentsRouter = require("./controllers/departments");
+const categoriesRouter = require("./controllers/categories");
 const cors = require("cors");
 app.use(cors());
 
@@ -26,6 +27,7 @@ app.use("/api/companies", companiesRouter);
 app.use("/api/issues", issuesRouter);
 app.use("/api/departments", departmentsRouter);
 app.use("/api/items", itemsRouter);
+app.use("/api/categories", categoriesRouter);
 
 app.use(express.static("dist"));
 

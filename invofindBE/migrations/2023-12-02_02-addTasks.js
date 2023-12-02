@@ -22,35 +22,21 @@ module.exports = {
       date: {
         type: DataTypes.DATE,
       },
-    });
-    await queryInterface.createTable("employees", {
-      id: {
+      employee_id: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      username: {
-        type: DataTypes.STRING,
-        unique: true,
         allowNull: false,
+        references: { model: "employees", key: "id" },
+        onDelete: "CASCADE",
       },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      item_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: { model: "items", key: "id" },
+        onDelete: "CASCADE",
       },
-      password_hash: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-    });
-    await queryInterface.addColumn("tasks", "employee_id", {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: { model: "employees", key: "id" },
     });
   },
   down: async ({ context: queryInterface }) => {
     await queryInterface.dropTable("tasks");
-    await queryInterface.dropTable("employees");
   },
 };

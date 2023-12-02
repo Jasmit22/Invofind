@@ -45,7 +45,7 @@ router.post("/", async (request, response) => {
     username: employee.username,
     name: employee.name,
     admin: employee.admin,
-    store_location: employee.store_location,
+    storeLocation: employee.storeLocation,
   });
 });
 

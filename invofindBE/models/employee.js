@@ -28,6 +28,11 @@ Employee.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    storeLocation: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: { model: "stores", key: "location" },
+    },
   },
   {
     sequelize,

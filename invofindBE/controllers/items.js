@@ -1,6 +1,7 @@
 const router = require("express").Router();
 
 const Department = require("../models/department");
+const Category = require("../models/category");
 const Item = require("../models/item");
 
 router.post("/", async (req, res) => {
@@ -16,10 +17,14 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   const items = await Item.findAll({
-    attributes: { exclude: ["departmentId"] },
+    attributes: { exclude: ["departmentId", "categoryId"] },
     include: [
       {
         model: Department,
+      },
+      {
+        model: Category,
+        attributes: ["name"],
       },
     ],
   });
@@ -28,10 +33,13 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const item = await Item.findByPk(req.params.id, {
-    attributes: { exclude: ["departmentId"] },
+    attributes: { exclude: ["departmentId", "categoryId"] },
     include: [
       {
         model: Department,
+      },
+      {
+        model: Category,
       },
     ],
   });

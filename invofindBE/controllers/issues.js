@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
     attributes: { exclude: ["employeeId"] },
     include: {
       model: Employee,
-      attributes: ["name", "id", "store_location"],
+      attributes: ["name", "id", "storeLocation"],
     },
     where,
   });

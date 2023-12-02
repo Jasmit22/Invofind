@@ -35,6 +35,12 @@ Item.init(
       references: { model: "departments", key: "id" },
       onDelete: "CASCADE",
     },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: { model: "categories", key: "id" },
+      onDelete: "CASCADE",
+    },
   },
   {
     sequelize,

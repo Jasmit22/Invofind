@@ -38,6 +38,7 @@ function App() {
   const [items, setItems] = useState([]);
   const [issues, setIssues] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const handleLogoutClick = () => {
     setIsLogoutModalOpen(true);
@@ -129,9 +130,9 @@ function App() {
   const fetchTasks = () => {
     if (user) {
       taskService.getAll().then((allTasks) => {
-        const userStoreLocation = user.store_location; // Assuming this is how you store the user's store location
+        const userStoreLocation = user.storeLocation; // Assuming this is how you store the user's store location
         const tasksForUserStore = allTasks.filter(
-          (task) => task.employee.store_location === userStoreLocation
+          (task) => task.employee.storeLocation === userStoreLocation
         );
         setTasks(tasksForUserStore);
       });
@@ -141,9 +142,9 @@ function App() {
   const fetchIssues = () => {
     if (user) {
       issueService.getAll().then((allIssues) => {
-        const userStoreLocation = user.store_location; // Assuming this is how you store the user's store location
+        const userStoreLocation = user.storeLocation; // Assuming this is how you store the user's store location
         const issuesForUserStore = allIssues.filter(
-          (issue) => issue.employee.store_location === userStoreLocation
+          (issue) => issue.employee.storeLocation === userStoreLocation
         );
         setIssues(issuesForUserStore);
       });
@@ -160,6 +161,10 @@ function App() {
 
   useEffect(() => {
     fetchDepartments();
+  }, [user]);
+
+  useEffect(() => {
+    fetchCategories();
   }, [user]);
 
   useEffect(() => {
@@ -388,7 +393,11 @@ function App() {
     return (
       <div className="addItem">
         <Togglable buttonLabel="Add Item">
-          <AddItemForm createItem={addItem} departments={departments} />
+          <AddItemForm
+            createItem={addItem}
+            departments={departments}
+            categories={categories}
+          />
         </Togglable>
       </div>
     );
@@ -411,8 +420,16 @@ function App() {
 
   const fetchDepartments = () => {
     if (user) {
-      storeService.getById(user.store_location).then((store) => {
+      storeService.getById(user.storeLocation).then((store) => {
         setDepartments(store.departments);
+      });
+    }
+  };
+
+  const fetchCategories = () => {
+    if (user) {
+      storeService.getById(user.storeLocation).then((store) => {
+        setCategories(store.categories);
       });
     }
   };
@@ -420,7 +437,7 @@ function App() {
   const fetchItems = () => {
     if (user) {
       itemService.getAll().then((allItems) => {
-        const userStoreLocation = user.store_location; // Assuming this is how you store the user's store location
+        const userStoreLocation = user.storeLocation; // Assuming this is how you store the user's store location
         const itemsForUserStore = allItems.filter(
           (item) => item.department.storeLocation === userStoreLocation
         );
@@ -592,8 +609,8 @@ function App() {
   };
 
   const handleAddUser = (username, name, password, admin) => {
-    const store_location = user.store_location;
-    employeeService.create({ username, name, password, admin, store_location });
+    const storeLocation = user.storeLocation;
+    employeeService.create({ username, name, password, admin, storeLocation });
     handleCloseModal();
   };
 

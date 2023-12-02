@@ -1,10 +1,10 @@
 const router = require("express").Router();
-const { Task, Employee } = require("../models");
+const { Task, Employee, Item } = require("../models");
 const { Op } = require("sequelize");
 const { tokenExtractor } = require("../util/middleware");
 
 router.get("/", async (req, res) => {
-  const where = {}; // Optimizes the query, or else there is an unneccessary "WHERE"
+  const where = {};
   if (req.query.resolved) {
     where.resolved = req.query.resolved === "true";
   }
@@ -13,14 +13,21 @@ router.get("/", async (req, res) => {
       [Op.substring]: req.query.search,
     };
   }
+
   const tasks = await Task.findAll({
     attributes: { exclude: ["employeeId"] },
-    include: {
-      model: Employee,
-      attributes: ["name", "id", "store_location"],
-    },
+    include: [
+      {
+        model: Employee,
+        attributes: ["name", "id", "storeLocation"],
+      },
+      //   {
+      //     model: Item,
+      //   },
+    ],
     where,
   });
+
   res.json(tasks);
 });
 
