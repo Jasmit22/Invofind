@@ -78,6 +78,7 @@ const AddItemForm = ({ createItem, departments, categories }) => {
             value={selectedDepartment}
             onChange={(event) => setSelectedDepartment(event.target.value)}
           >
+            <option value="">Select...</option>
             {departments.map((department, index) => (
               <option key={index} value={department.deptName}>
                 {department.deptName}
@@ -97,6 +98,7 @@ const AddItemForm = ({ createItem, departments, categories }) => {
             value={selectedCategory}
             onChange={(event) => setSelectedCategory(event.target.value)}
           >
+            <option value="">Select...</option>
             {categories.map((category, index) => (
               <option key={index} value={category.name}>
                 {category.name}

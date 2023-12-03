@@ -1,5 +1,6 @@
 const router = require("express").Router();
-const { Task, Employee, Item } = require("../models");
+const { Task, Employee } = require("../models");
+const Item = require("../models/item");
 const { Op } = require("sequelize");
 const { tokenExtractor } = require("../util/middleware");
 
@@ -20,6 +21,9 @@ router.get("/", async (req, res) => {
       {
         model: Employee,
         attributes: ["name", "id", "storeLocation"],
+      },
+      {
+        model: Item,
       },
       //   {
       //     model: Item,

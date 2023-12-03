@@ -46,14 +46,8 @@ Category.belongsTo(Store);
 Store.hasMany(Category);
 
 // Task and Item
-Task.belongsTo(Item, {
-  foreignKey: "itemId",
-  as: "item",
-});
-Item.hasMany(Task, {
-  foreignKey: "itemId",
-  as: "tasks",
-});
+Task.belongsTo(Item);
+Item.hasMany(Task);
 
 module.exports = {
   Task,

@@ -17,7 +17,8 @@ const Task = ({ task, markResolved, user, deleteTask }) => {
 
   return (
     <React.Fragment>
-      <td className="text-center">
+      <td>{task.item ? task.item.name : null}</td>
+      <td>
         <button
           className="text-white p-1.5 cursor-pointer ml-8 border-2 border-transparent"
           style={{

@@ -229,6 +229,14 @@ function App() {
         <div className="flex justify-center w-full">
           <table className="w-full">
             <tbody>
+              <tr className="">
+                <td>
+                  <b>Task Description</b>
+                </td>
+                <td>
+                  <b>Associated Item</b>
+                </td>
+              </tr>
               {filteredTasks.map((task) => (
                 <tr key={task.id}>
                   <td>{task.content.toProperCase()}</td>
@@ -383,7 +391,7 @@ function App() {
     return (
       <div className="addTask">
         <Togglable buttonLabel="Add Task">
-          <AddTaskForm createTask={addTask} />
+          <AddTaskForm createTask={addTask} items={items} />
         </Togglable>
       </div>
     );
@@ -472,6 +480,9 @@ function App() {
                 <td>
                   <b>Department</b>
                 </td>
+                <td>
+                  <b>Category</b>
+                </td>
               </tr>
               {filteredItems.map((item) => (
                 <tr key={item.id}>
@@ -479,6 +490,7 @@ function App() {
                   <td>{item.price.toProperCase()}</td>
                   <td>{item.quantity}</td>
                   <td>{item.department.deptName}</td>
+                  <td>{item.category.name}</td>
                   <Item
                     item={item}
                     user={user}
