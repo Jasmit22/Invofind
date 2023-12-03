@@ -17,7 +17,7 @@ module.exports = {
         primaryKey: true,
         unique: true,
       },
-      company_id: {
+      company_name: {
         type: DataTypes.STRING,
         allowNull: false,
         references: { model: "companies", key: "name" },

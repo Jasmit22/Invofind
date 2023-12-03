@@ -1,6 +1,6 @@
 import React from "react";
 
-const Task = ({ task, markResolved, user, deleteTask }) => {
+const Task = ({ task, markResolved, user, deleteTask, toProperCase }) => {
   const renderDelete = () => {
     return (
       <td className="text-center">
@@ -17,7 +17,7 @@ const Task = ({ task, markResolved, user, deleteTask }) => {
 
   return (
     <React.Fragment>
-      <td>{task.item ? task.item.name : null}</td>
+      <td>{task.item ? task.item.name.toProperCase() : null}</td>
       <td>
         <button
           className="text-white p-1.5 cursor-pointer ml-8 border-2 border-transparent"

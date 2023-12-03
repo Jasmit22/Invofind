@@ -5,6 +5,7 @@ const Employee = require("./models/employee");
 const Department = require("./models/department");
 const db = require("./util/db"); // Your database connection, adjust path as necessary
 const Category = require("./models/category");
+const Location = require("./models/location");
 
 // Function to seed the database
 async function seedDatabase() {
@@ -20,7 +21,7 @@ async function seedDatabase() {
     // Add a store, linking it to the company
     const store = await Store.create({
       location: 1,
-      companyId: "Amazon",
+      companyName: "Amazon",
     });
 
     // Add an admin, linking them to the store
@@ -65,6 +66,12 @@ async function seedDatabase() {
     const category3 = await Category.create({
       name: "Lite",
       storeLocation: 1,
+    });
+
+    const location = await Location.create({
+      type: "shelf",
+      storeLocation: 1,
+      date: new Date(),
     });
 
     console.log("Database seeded successfully");

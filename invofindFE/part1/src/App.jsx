@@ -39,6 +39,8 @@ function App() {
   const [issues, setIssues] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [newDepartmentName, setNewDepartmentName] = useState("");
+  const [newCategoryName, setNewCategoryName] = useState("");
 
   const handleLogoutClick = () => {
     setIsLogoutModalOpen(true);
@@ -245,6 +247,7 @@ function App() {
                     markResolved={markTaskResolved}
                     user={user}
                     deleteTask={deleteTask}
+                    toProperCase={String.prototype.toProperCase}
                   />
                 </tr>
               ))}
@@ -487,7 +490,7 @@ function App() {
               {filteredItems.map((item) => (
                 <tr key={item.id}>
                   <td>{item.name.toProperCase()}</td>
-                  <td>{item.price.toProperCase()}</td>
+                  <td>${item.price.toProperCase()}</td>
                   <td>{item.quantity}</td>
                   <td>{item.department.deptName}</td>
                   <td>{item.category.name}</td>
@@ -545,6 +548,77 @@ function App() {
     setIsDeleteItemModalOpen(true);
   };
 
+  const showDepartments = () => {
+    return (
+      <div className="allDeptCat">
+        <table className="table-auto">
+          <thead>
+            <tr>
+              <th className="text-xl">Department Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {departments.map((dept, index) => (
+              <tr key={index}>
+                <td>• {dept.deptName}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="mt-4">
+          <input
+            value={newDepartmentName}
+            onChange={(e) => setNewDepartmentName(e.target.value)}
+            placeholder="New Department"
+            className="mr-10 w-50"
+          />
+          <button onClick={addDepartment}>Add</button>
+        </div>
+      </div>
+    );
+  };
+
+  const addDepartment = () => {
+    // Implement logic to add new department
+    // For example: send a request to your backend service to add the department
+    // After adding, fetch the updated list of departments
+  };
+
+  const showCategories = () => {
+    return (
+      <div className="allDeptCat">
+        <table className="table-auto">
+          <thead>
+            <tr>
+              <th className="text-xl">Category Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {categories.map((cat, index) => (
+              <tr key={index}>
+                <td>• {cat.name}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="mt-4">
+          <input
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
+            placeholder="New Category"
+            className="mr-10 w-50"
+          />
+          <button onClick={addCategory}>Add</button>
+        </div>
+      </div>
+    );
+  };
+
+  const addCategory = () => {
+    // Implement logic to add new category
+    // Similar to addDepartment
+  };
+
   function openInfo(evt, infoName) {
     // Declare all variables
     var i, tabcontent, tablinks;
@@ -565,6 +639,15 @@ function App() {
     document.getElementById(infoName).style.display = "block";
     evt.currentTarget.className += " active";
   }
+
+  const showExtras = () => {
+    return (
+      <div className="">
+        {showDepartments()}
+        {showCategories()}
+      </div>
+    );
+  };
 
   const showSample = () => {
     return (
@@ -588,18 +671,25 @@ function App() {
           >
             Issues
           </button>
+          <button
+            className="tablinks"
+            onClick={(event) => openInfo(event, "Extras")}
+          >
+            Extras
+          </button>
         </div>
 
         <div id="Info1" className="tabcontent">
           {showTasks()}
         </div>
-
         <div id="Info2" className="tabcontent">
           {showItems()}
         </div>
-
         <div id="Info3" className="tabcontent">
           {showIssues()}
+        </div>
+        <div id="Extras" className="tabcontent">
+          {showExtras()}
         </div>
       </div>
     );

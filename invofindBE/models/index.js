@@ -6,16 +6,11 @@ const Issue = require("./issue");
 const Department = require("./department");
 const Item = require("./item");
 const Category = require("./category");
+const Location = require("./location");
 
 // Company and Stores
-Company.hasMany(Store, {
-  foreignKey: "company_id",
-  as: "stores",
-});
-Store.belongsTo(Company, {
-  foreignKey: "company_id",
-  as: "company",
-});
+Store.belongsTo(Company);
+Company.hasMany(Store);
 
 // Store and Employee
 Employee.belongsTo(Store);
@@ -48,6 +43,14 @@ Store.hasMany(Category);
 // Task and Item
 Task.belongsTo(Item);
 Item.hasMany(Task);
+
+// Location and Store
+Location.belongsTo(Store);
+Store.hasMany(Location);
+
+// Item and Location
+Item.belongsTo(Location);
+Location.hasMany(Item);
 
 module.exports = {
   Task,

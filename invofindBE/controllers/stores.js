@@ -3,6 +3,7 @@ const router = require("express").Router();
 const Department = require("../models/department");
 const Store = require("../models/store");
 const Category = require("../models/category");
+const Location = require("../models/location");
 
 router.post("/", async (req, res) => {
   try {
@@ -27,6 +28,10 @@ router.get("/", async (req, res) => {
         model: Category,
         // DON'T EXCLUDE ANYTHING
       },
+      {
+        model: Location,
+        // DON'T EXCLUDE ANYTHING
+      },
     ],
   });
   res.json(stores);
@@ -41,6 +46,10 @@ router.get("/:id", async (req, res) => {
       },
       {
         model: Category,
+        // DON'T EXCLUDE ANYTHING
+      },
+      {
+        model: Location,
         // DON'T EXCLUDE ANYTHING
       },
     ],

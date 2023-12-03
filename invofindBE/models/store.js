@@ -12,7 +12,7 @@ Store.init(
       primaryKey: true,
       unique: true,
     },
-    companyId: {
+    companyName: {
       type: DataTypes.STRING,
       allowNull: false,
       references: { model: "companies", key: "name" },

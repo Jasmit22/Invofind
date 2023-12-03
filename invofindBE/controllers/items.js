@@ -3,6 +3,7 @@ const router = require("express").Router();
 const Department = require("../models/department");
 const Category = require("../models/category");
 const Item = require("../models/item");
+const Location = require("../models/location");
 
 router.post("/", async (req, res) => {
   try {
@@ -25,6 +26,10 @@ router.get("/", async (req, res) => {
       {
         model: Category,
         attributes: ["name"],
+      },
+      {
+        model: Location,
+        // attributes: ["name"],
       },
     ],
   });
