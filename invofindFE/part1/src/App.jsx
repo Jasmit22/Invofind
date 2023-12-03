@@ -9,12 +9,15 @@ import itemService from "./services/items";
 import employeeService from "./services/employees";
 import departmentService from "./services/departments";
 import categoryService from "./services/categories";
+import locationService from "./services/locations";
 import Task from "./components/Task";
 import Issue from "./components/Issue";
 import Item from "./components/Item";
+import Location from "./components/Location";
 import AddTaskForm from "./components/AddTaskForm";
 import AddIssueForm from "./components/AddIssueForm";
 import AddItemForm from "./components/AddItemForm";
+import AddLocationForm from "./components/AddLocationForm";
 import ConfirmModal from "./components/ConfirmModal";
 import AddUserModal from "./components/AddUserModal";
 
@@ -34,6 +37,9 @@ function App() {
   const [isDeleteIssueModalOpen, setIsDeleteIssueModalOpen] = useState(false);
   const [isDeleteItemModalOpen, setIsDeleteItemModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [isDeleteLocationModalOpen, setIsDeleteLocationModalOpen] =
+    useState(false);
+  const [locationToDelete, setLocationToDelete] = useState(null);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [issueToDelete, setIssueToDelete] = useState(null);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -43,6 +49,8 @@ function App() {
   const [categories, setCategories] = useState([]);
   const [newDepartmentName, setNewDepartmentName] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [newLocationFilter, setNewLocationFilter] = useState("");
+  const [locations, setLocations] = useState([]);
 
   const handleLogoutClick = () => {
     setIsLogoutModalOpen(true);
@@ -175,6 +183,10 @@ function App() {
     fetchItems();
   }, [user]);
 
+  useEffect(() => {
+    fetchLocations();
+  }, [user]);
+
   const checkLoginStatus = () => {
     const decode = JSON.parse(atob(user.token.split(".")[1]));
     if (decode.exp * 1000 < new Date().getTime()) {
@@ -275,7 +287,7 @@ function App() {
     if (!checkLoginStatus()) {
       if (task.content !== null) {
         taskService.create(task).then((returnedTask) => {
-          setTasks(tasks.concat(returnedTask));
+          fetchTasks();
         });
       }
     }
@@ -410,6 +422,7 @@ function App() {
             createItem={addItem}
             departments={departments}
             categories={categories}
+            locations={locations}
           />
         </Togglable>
       </div>
@@ -584,7 +597,12 @@ function App() {
               placeholder="New Department"
               className="mr-10 w-50"
             />
-            <button onClick={addDepartment}>Add</button>
+            <button
+              onClick={addDepartment}
+              className="bg-[#a0d2eb] text-[#31343f]"
+            >
+              Add
+            </button>
           </div>
         )}
       </div>
@@ -640,7 +658,12 @@ function App() {
               placeholder="New Category"
               className="mr-10 w-50"
             />
-            <button onClick={addCategory}>Add</button>
+            <button
+              onClick={addCategory}
+              className="bg-[#a0d2eb] text-[#31343f]"
+            >
+              Add
+            </button>
           </div>
         )}
       </div>
@@ -703,6 +726,96 @@ function App() {
     );
   };
 
+  const renderAddLocation = () => {
+    return (
+      <div className="addLocation">
+        <Togglable buttonLabel="Add Location">
+          <AddLocationForm createLocation={addLocation} user={user} />
+        </Togglable>
+      </div>
+    );
+  };
+
+  const addLocation = (location) => {
+    if (!checkLoginStatus()) {
+      locationService.create(location).then((returnedLocation) => {
+        setLocations(locations.concat(returnedLocation));
+      });
+    }
+  };
+
+  const deleteLocation = (location) => {
+    setLocationToDelete(location);
+    setIsDeleteLocationModalOpen(true);
+  };
+
+  const handleConfirmDeleteLocation = async () => {
+    if (locationToDelete) {
+      try {
+        await locationService.remove(locationToDelete.id);
+        fetchLocations();
+        fetchItems(); // Assuming you want to refresh items after deleting a location
+      } catch (error) {
+        console.error("Error deleting the location:", error);
+      }
+    }
+    setIsDeleteLocationModalOpen(false);
+    setLocationToDelete(null);
+  };
+
+  const filteredLocations = locations.filter((location) => {
+    return location.type
+      .toUpperCase()
+      .includes(newLocationFilter.toUpperCase());
+  });
+
+  const fetchLocations = () => {
+    if (user) {
+      locationService.getAll().then((allLocations) => {
+        const userStoreLocation = user.storeLocation; // Assuming this is how you store the user's store location
+        const locationsForUserStore = allLocations.filter(
+          (location) => location.storeLocation === userStoreLocation
+        );
+        setLocations(locationsForUserStore);
+      });
+    }
+  };
+
+  const showLocations = () => {
+    return (
+      <div className="allItems">
+        {user !== null && user.admin && renderAddLocation()}
+        <input
+          className="filterLocations mb-6"
+          onChange={(event) => setNewLocationFilter(event.target.value)}
+          value={newLocationFilter}
+          placeholder={"Filter Locations"}
+        />
+        <div className="flex justify-center w-full">
+          <table className="w-full">
+            <tbody>
+              <tr>
+                <td>
+                  <b>Type</b>
+                </td>
+              </tr>
+              {filteredLocations.map((location) => (
+                <tr key={location.id}>
+                  <td>{location.type.toProperCase()}</td>
+                  <Location
+                    location={location}
+                    user={user}
+                    deleteLocation={() => deleteLocation(location)}
+                  />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
   const showSample = () => {
     return (
       <div className="mx-10">
@@ -727,6 +840,12 @@ function App() {
           </button>
           <button
             className="tablinks"
+            onClick={(event) => openInfo(event, "Info4")}
+          >
+            Locations
+          </button>
+          <button
+            className="tablinks"
             onClick={(event) => openInfo(event, "Extras")}
           >
             Extras
@@ -741,6 +860,9 @@ function App() {
         </div>
         <div id="Info3" className="tabcontent">
           {showIssues()}
+        </div>
+        <div id="Info4" className="tabcontent">
+          {showLocations()}
         </div>
         <div id="Extras" className="tabcontent">
           {showExtras()}
@@ -806,6 +928,13 @@ function App() {
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
         message="Are you sure you want to delete this item?"
+      />
+
+      <ConfirmModal
+        isOpen={isDeleteLocationModalOpen}
+        onClose={() => setIsDeleteLocationModalOpen(false)}
+        onConfirm={handleConfirmDeleteLocation}
+        message="Are you sure you want to delete the location? All associated items will also be deleted."
       />
 
       <AddUserModal

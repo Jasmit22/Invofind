@@ -64,7 +64,13 @@ async function seedDatabase() {
     });
 
     const location = await Location.create({
-      type: "shelf",
+      type: "Shelf",
+      storeLocation: 1,
+      date: new Date(),
+    });
+
+    const location2 = await Location.create({
+      type: "Other",
       storeLocation: 1,
       date: new Date(),
     });

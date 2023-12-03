@@ -7,12 +7,13 @@ module.exports = {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+        onDelete: "CASCADE",
       },
       type: {
-        type: DataTypes.STRING(60), // Change from TEXT to STRING with a maximum length of 60 characters
+        type: DataTypes.STRING(60),
         allowNull: false,
         validate: {
-          len: [1, 60], // Set the maximum length
+          len: [1, 60],
         },
       },
       date: {
@@ -25,14 +26,17 @@ module.exports = {
         onDelete: "CASCADE",
       },
     });
+
     await queryInterface.addColumn("items", "location_id", {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: { model: "locations", key: "id" },
+      onDelete: "CASCADE", // Add this line to enable cascading delete
     });
   },
 
   down: async ({ context: queryInterface }) => {
+    await queryInterface.removeColumn("items", "location_id"); // Remove the foreign key column first
     await queryInterface.dropTable("locations");
   },
 };

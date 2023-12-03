@@ -1,12 +1,13 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 
-const AddItemForm = ({ createItem, departments, categories }) => {
+const AddItemForm = ({ createItem, departments, categories, locations }) => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
 
   const addItem = (event) => {
     event.preventDefault();
@@ -17,6 +18,9 @@ const AddItemForm = ({ createItem, departments, categories }) => {
       const categoryObject = categories.find(
         (cat) => cat.name === selectedCategory
       );
+      const locationObject = locations.find(
+        (loc) => loc.type === selectedLocation
+      );
 
       createItem({
         name: name,
@@ -24,6 +28,7 @@ const AddItemForm = ({ createItem, departments, categories }) => {
         quantity: quantity,
         departmentId: departmentObject.id,
         categoryId: categoryObject.id,
+        locationId: locationObject.id,
       });
 
       setName("");
@@ -31,6 +36,7 @@ const AddItemForm = ({ createItem, departments, categories }) => {
       setQuantity("");
       setSelectedDepartment("");
       setSelectedCategory("");
+      setSelectedLocation("");
     }
   };
 
@@ -102,6 +108,26 @@ const AddItemForm = ({ createItem, departments, categories }) => {
             {categories.map((category, index) => (
               <option key={index} value={category.name}>
                 {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-row">
+          <label htmlFor="locationSelect" className="form-label">
+            Choose a Location:
+          </label>
+          <select
+            className="form-input"
+            id="locationSelect"
+            name="locations"
+            value={selectedLocation}
+            onChange={(event) => setSelectedLocation(event.target.value)}
+          >
+            <option value="">Select...</option>
+            {locations.map((location, index) => (
+              <option key={index} value={location.type}>
+                {location.type}
               </option>
             ))}
           </select>
