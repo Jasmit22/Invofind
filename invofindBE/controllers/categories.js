@@ -43,4 +43,16 @@ router.get("/:id", async (req, res) => {
   res.json({ ...category.toJSON() });
 });
 
+const categoryFinder = async (req, res, next) => {
+  req.category = await Category.findByPk(req.params.id);
+  next();
+};
+
+router.delete("/:id", categoryFinder, async (req, res) => {
+  if (req.category) {
+    await req.category.destroy();
+  }
+  res.status(204).end();
+});
+
 module.exports = router;

@@ -7,6 +7,8 @@ import issueService from "./services/issues";
 import storeService from "./services/stores";
 import itemService from "./services/items";
 import employeeService from "./services/employees";
+import departmentService from "./services/departments";
+import categoryService from "./services/categories";
 import Task from "./components/Task";
 import Issue from "./components/Issue";
 import Item from "./components/Item";
@@ -533,7 +535,6 @@ function App() {
   };
 
   const filteredItems = items.filter((item) => {
-    // console.log(item.name);
     return item.name.toUpperCase().includes(newItemFilter.toUpperCase());
   });
 
@@ -551,72 +552,125 @@ function App() {
   const showDepartments = () => {
     return (
       <div className="allDeptCat">
-        <table className="table-auto">
+        <table className="table-auto w-full">
           <thead>
-            <tr>
-              <th className="text-xl">Department Name</th>
+            <tr className="text-left">
+              <th>Department Name</th>
             </tr>
           </thead>
           <tbody>
             {departments.map((dept, index) => (
               <tr key={index}>
                 <td>• {dept.deptName}</td>
+                {user && user.admin && (
+                  <td>
+                    <button
+                      className="bg-[#f44336]"
+                      onClick={() => deleteDepartment(dept.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="mt-4">
-          <input
-            value={newDepartmentName}
-            onChange={(e) => setNewDepartmentName(e.target.value)}
-            placeholder="New Department"
-            className="mr-10 w-50"
-          />
-          <button onClick={addDepartment}>Add</button>
-        </div>
+        {user.admin && (
+          <div className="mt-4">
+            <input
+              value={newDepartmentName}
+              onChange={(e) => setNewDepartmentName(e.target.value)}
+              placeholder="New Department"
+              className="mr-10 w-50"
+            />
+            <button onClick={addDepartment}>Add</button>
+          </div>
+        )}
       </div>
     );
   };
 
   const addDepartment = () => {
-    // Implement logic to add new department
-    // For example: send a request to your backend service to add the department
-    // After adding, fetch the updated list of departments
+    if (!checkLoginStatus()) {
+      departmentService
+        .create({
+          deptName: newDepartmentName,
+          storeLocation: user.storeLocation,
+        })
+        .then((returnedDepartment) => {
+          setDepartments(departments.concat(returnedDepartment));
+          setNewDepartmentName("");
+        });
+    }
   };
 
   const showCategories = () => {
     return (
       <div className="allDeptCat">
-        <table className="table-auto">
+        <table className="table-auto w-full">
           <thead>
-            <tr>
-              <th className="text-xl">Category Name</th>
+            <tr className="text-left">
+              <th>Category Name</th>
             </tr>
           </thead>
           <tbody>
             {categories.map((cat, index) => (
               <tr key={index}>
                 <td>• {cat.name}</td>
+                {user && user.admin && (
+                  <td>
+                    <button
+                      className="bg-[#f44336]"
+                      onClick={() => deleteCategory(cat.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="mt-4">
-          <input
-            value={newCategoryName}
-            onChange={(e) => setNewCategoryName(e.target.value)}
-            placeholder="New Category"
-            className="mr-10 w-50"
-          />
-          <button onClick={addCategory}>Add</button>
-        </div>
+        {user.admin && (
+          <div className="mt-4">
+            <input
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              placeholder="New Category"
+              className="mr-10 w-50"
+            />
+            <button onClick={addCategory}>Add</button>
+          </div>
+        )}
       </div>
     );
   };
 
   const addCategory = () => {
-    // Implement logic to add new category
-    // Similar to addDepartment
+    if (!checkLoginStatus()) {
+      categoryService
+        .create({
+          name: newCategoryName,
+          storeLocation: user.storeLocation,
+        })
+        .then((returnedCategory) => {
+          setCategories(categories.concat(returnedCategory));
+          setNewCategoryName("");
+        });
+    }
+  };
+
+  const deleteDepartment = async (deptId) => {
+    // Implement deletion logic
+    await departmentService.remove(deptId);
+    fetchDepartments(); // Refresh the departments list
+  };
+
+  const deleteCategory = async (catId) => {
+    // Implement deletion logic
+    await categoryService.remove(catId);
+    fetchCategories(); // Refresh the categories list
   };
 
   function openInfo(evt, infoName) {

@@ -3,28 +3,23 @@ const Company = require("./models/company");
 const Store = require("./models/store");
 const Employee = require("./models/employee");
 const Department = require("./models/department");
-const db = require("./util/db"); // Your database connection, adjust path as necessary
+const db = require("./util/db");
 const Category = require("./models/category");
 const Location = require("./models/location");
 
-// Function to seed the database
 async function seedDatabase() {
   try {
     // Connect to the database
     await db.connectToDatabase();
 
-    // Add a company
     const company = await Company.create({
       name: "Amazon",
     });
 
-    // Add a store, linking it to the company
     const store = await Store.create({
       location: 1,
       companyName: "Amazon",
     });
-
-    // Add an admin, linking them to the store
 
     const saltRounds = 10;
     const password = "abc123";
@@ -80,5 +75,4 @@ async function seedDatabase() {
   }
 }
 
-// Run the seed function
 seedDatabase();

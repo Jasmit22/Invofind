@@ -19,4 +19,16 @@ router.get("/", async (req, res) => {
   res.json(departments);
 });
 
+const departmentFinder = async (req, res, next) => {
+  req.department = await Department.findByPk(req.params.id);
+  next();
+};
+
+router.delete("/:id", departmentFinder, async (req, res) => {
+  if (req.department) {
+    await req.department.destroy();
+  }
+  res.status(204).end();
+});
+
 module.exports = router;

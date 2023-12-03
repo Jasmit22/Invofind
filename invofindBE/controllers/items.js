@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   const items = await Item.findAll({
-    attributes: { exclude: ["departmentId", "categoryId"] },
+    attributes: { exclude: ["departmentId", "categoryId", "locationId"] },
     include: [
       {
         model: Department,
@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
       },
       {
         model: Location,
-        // attributes: ["name"],
+        attributes: ["id", "type"],
       },
     ],
   });
@@ -38,13 +38,17 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const item = await Item.findByPk(req.params.id, {
-    attributes: { exclude: ["departmentId", "categoryId"] },
+    attributes: { exclude: ["departmentId", "categoryId", "locationId"] },
     include: [
       {
         model: Department,
       },
       {
         model: Category,
+      },
+      {
+        model: Location,
+        attributes: ["id", "type"],
       },
     ],
   });
