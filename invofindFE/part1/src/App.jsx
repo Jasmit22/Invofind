@@ -308,7 +308,7 @@ function App() {
   const showIssues = () => {
     return (
       <div className="allItems">
-        {user !== null && user.admin && renderAddIssue()}
+        {user !== null && renderAddIssue()}
         <input
           className="filterItems mb-6"
           onChange={(event) => setNewIssueFilter(event.target.value)}
@@ -318,6 +318,11 @@ function App() {
         <div className="flex justify-center w-full">
           <table className="w-full">
             <tbody>
+              <tr>
+                <td>
+                  <b>Issue</b>
+                </td>
+              </tr>
               {filteredIssues.map((issue) => (
                 <tr key={issue.id}>
                   <td>{issue.description.toProperCase()}</td>
@@ -475,7 +480,7 @@ function App() {
   const showItems = () => {
     return (
       <div className="allItems">
-        {user !== null && user.admin && renderAddItem()}
+        {user !== null && renderAddItem()}
         <input
           className="filterItems mb-6"
           onChange={(event) => setNewItemFilter(event.target.value)}
@@ -501,6 +506,9 @@ function App() {
                 <td>
                   <b>Category</b>
                 </td>
+                <td>
+                  <b>Location</b>
+                </td>
               </tr>
               {filteredItems.map((item) => (
                 <tr key={item.id}>
@@ -509,6 +517,7 @@ function App() {
                   <td>{item.quantity}</td>
                   <td>{item.department.deptName}</td>
                   <td>{item.category.name}</td>
+                  <td>{item.location.type}</td>
                   <Item
                     item={item}
                     user={user}
@@ -739,7 +748,7 @@ function App() {
   const addLocation = (location) => {
     if (!checkLoginStatus()) {
       locationService.create(location).then((returnedLocation) => {
-        setLocations(locations.concat(returnedLocation));
+        fetchLocations();
       });
     }
   };
@@ -798,10 +807,14 @@ function App() {
                 <td>
                   <b>Type</b>
                 </td>
+                <td>
+                  <b>Items</b>
+                </td>
               </tr>
               {filteredLocations.map((location) => (
                 <tr key={location.id}>
                   <td>{location.type.toProperCase()}</td>
+                  <td>{location.items.map((item) => item.name).join(", ")}</td>
                   <Location
                     location={location}
                     user={user}
