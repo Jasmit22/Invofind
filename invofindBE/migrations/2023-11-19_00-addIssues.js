@@ -22,11 +22,12 @@ module.exports = {
       date_resolved: {
         type: DataTypes.DATE,
       },
-    });
-    await queryInterface.addColumn("issues", "employee_id", {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: { model: "employees", key: "id" },
+      employee_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: { model: "employees", key: "id" },
+        onDelete: "CASCADE",
+      },
     });
   },
   down: async ({ context: queryInterface }) => {

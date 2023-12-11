@@ -25,6 +25,12 @@ Issue.init(
     dateResolved: {
       type: DataTypes.DATE,
     },
+    employeeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: { model: "employees", key: "id" },
+      onDelete: "CASCADE",
+    },
   },
   {
     sequelize,

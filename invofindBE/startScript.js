@@ -6,6 +6,9 @@ const Department = require("./models/department");
 const db = require("./util/db");
 const Category = require("./models/category");
 const Location = require("./models/location");
+const Item = require("./models/item");
+const Task = require("./models/task");
+const Issue = require("./models/issue");
 
 async function seedDatabase() {
   try {
@@ -50,6 +53,14 @@ async function seedDatabase() {
       storeLocation: 2,
     };
 
+    const userFor2 = {
+      username: "user2@user.com",
+      name: "User2",
+      passwordHash: passwordHash,
+      admin: false,
+      storeLocation: 2,
+    };
+
     const admin1 = await Employee.create(adminData1);
 
     const admin2 = await Employee.create(adminData2);
@@ -68,7 +79,15 @@ async function seedDatabase() {
     });
 
     const department4 = await Department.create({
-      deptName: "Stuff",
+      deptName: "Clothing",
+      storeLocation: 2,
+    });
+    const department5 = await Department.create({
+      deptName: "Furtniture",
+      storeLocation: 2,
+    });
+    const department6 = await Department.create({
+      deptName: "Toys",
       storeLocation: 2,
     });
 
@@ -76,24 +95,25 @@ async function seedDatabase() {
       name: "Basic",
       storeLocation: 1,
     });
-
     const category2 = await Category.create({
       name: "Premium",
       storeLocation: 1,
     });
-
     const category3 = await Category.create({
       name: "Lite",
       storeLocation: 1,
     });
 
     const category4 = await Category.create({
-      name: "Wow",
+      name: "Standard",
       storeLocation: 2,
     });
-
     const category5 = await Category.create({
-      name: "Cool",
+      name: "High Quality",
+      storeLocation: 2,
+    });
+    const category6 = await Category.create({
+      name: "Low Quality",
       storeLocation: 2,
     });
 
@@ -102,7 +122,6 @@ async function seedDatabase() {
       storeLocation: 1,
       date: new Date(),
     });
-
     const location2 = await Location.create({
       type: "Other",
       storeLocation: 1,
@@ -110,9 +129,47 @@ async function seedDatabase() {
     });
 
     const location3 = await Location.create({
-      type: "Big Location",
+      type: "Table",
       storeLocation: 2,
       date: new Date(),
+    });
+    const location4 = await Location.create({
+      type: "Other",
+      storeLocation: 2,
+      date: new Date(),
+    });
+
+    const item1 = await Item.create({
+      name: "Apple",
+      price: "1.00",
+      quantity: 100,
+      departmentId: 1,
+      categoryId: 1,
+      locationId: 1,
+    });
+
+    const task1 = await Task.create({
+      content: "Please clean the store before closing.",
+      storeLocation: 1,
+      resolved: false,
+      employeeId: 1,
+    });
+    const task2 = await Task.create({
+      content: "Please restock the apples.",
+      storeLocation: 2,
+      resolved: false,
+      employeeId: 2,
+    });
+
+    const issue1 = await Issue.create({
+      description: "Need to order more oranges.",
+      resolved: false,
+      employeeId: 1,
+    });
+    const issue2 = await Issue.create({
+      description: "Need to order more pears.",
+      resolved: true,
+      employeeId: 2,
     });
 
     console.log("Database seeded successfully");
