@@ -55,7 +55,7 @@ async function seedDatabase() {
       storeLocation: 2,
     };
 
-    const userFor2 = {
+    const userFor = {
       username: "user2@user.com",
       firstName: "User",
       lastName: "User",
@@ -67,6 +67,8 @@ async function seedDatabase() {
     const admin1 = await Employee.create(adminData1);
 
     const admin2 = await Employee.create(adminData2);
+
+    const user = await Employee.create(userFor);
 
     const department = await Department.create({
       deptName: "Produce",
@@ -150,12 +152,37 @@ async function seedDatabase() {
       categoryId: 1,
       locationId: 1,
     });
+    const item2 = await Item.create({
+      name: "Orange",
+      price: "2.00",
+      quantity: 10,
+      departmentId: 2,
+      categoryId: 3,
+      locationId: 1,
+    });
+    const item3 = await Item.create({
+      name: "Chair",
+      price: "50",
+      quantity: 5,
+      departmentId: 4,
+      categoryId: 5,
+      locationId: 4,
+    });
+    const item4 = await Item.create({
+      name: "Banana",
+      price: "2.00",
+      quantity: 100,
+      departmentId: 5,
+      categoryId: 5,
+      locationId: 4,
+    });
 
     const task1 = await Task.create({
       content: "Please clean the store before closing.",
       storeLocation: 1,
       resolved: false,
       employeeId: 1,
+      itemId: 1,
     });
     const task2 = await Task.create({
       content: "Please restock the apples.",
