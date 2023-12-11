@@ -39,7 +39,8 @@ async function seedDatabase() {
 
     const adminData1 = {
       username: "admin@admin.com",
-      name: "Jasmit",
+      firstName: "Jasmit",
+      lastName: "S",
       passwordHash: passwordHash,
       admin: true,
       storeLocation: 1,
@@ -47,7 +48,8 @@ async function seedDatabase() {
 
     const adminData2 = {
       username: "admin2@admin.com",
-      name: "Admin",
+      firstName: "Admin",
+      lastName: "Admin",
       passwordHash: passwordHash,
       admin: true,
       storeLocation: 2,
@@ -55,7 +57,8 @@ async function seedDatabase() {
 
     const userFor2 = {
       username: "user2@user.com",
-      name: "User2",
+      firstName: "User",
+      lastName: "User",
       passwordHash: passwordHash,
       admin: false,
       storeLocation: 2,

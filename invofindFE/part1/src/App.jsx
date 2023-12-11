@@ -899,9 +899,16 @@ function App() {
     );
   };
 
-  const handleAddUser = (username, name, password, admin) => {
+  const handleAddUser = (username, firstName, lastName, password, admin) => {
     const storeLocation = user.storeLocation;
-    employeeService.create({ username, name, password, admin, storeLocation });
+    employeeService.create({
+      username,
+      firstName,
+      lastName,
+      password,
+      admin,
+      storeLocation,
+    });
     handleCloseModal();
   };
 

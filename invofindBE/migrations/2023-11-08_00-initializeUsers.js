@@ -13,7 +13,11 @@ module.exports = {
         unique: true,
         allowNull: false,
       },
-      name: {
+      first_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      last_name: {
         type: DataTypes.STRING,
         allowNull: false,
       },

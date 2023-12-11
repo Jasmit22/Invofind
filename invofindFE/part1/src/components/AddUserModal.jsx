@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
 const AddUserModal = ({ isOpen, onClose, onAdd, message }) => {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -10,7 +11,8 @@ const AddUserModal = ({ isOpen, onClose, onAdd, message }) => {
 
   const clearAll = () => {
     // Clear all fields and errors, reset isAdmin to false
-    setName("");
+    setFirstName("");
+    setLastName("");
     setUsername("");
     setPassword("");
     setConfirmPassword("");
@@ -25,7 +27,7 @@ const AddUserModal = ({ isOpen, onClose, onAdd, message }) => {
       return;
     }
     clearAll();
-    onAdd(username, name, password, isAdmin); // Pass an object including isAdmin to onAdd
+    onAdd(username, firstName, lastName, password, isAdmin); // Pass an object including isAdmin to onAdd
   };
 
   const handleCancel = () => {
@@ -43,10 +45,17 @@ const AddUserModal = ({ isOpen, onClose, onAdd, message }) => {
         <div className="flex flex-col mb-4">
           <input
             type="text"
-            placeholder="Name"
+            placeholder="First Name"
             className="mb-2 p-2 rounded"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Last Name"
+            className="mb-2 p-2 rounded"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
           />
           <input
             type="text"

@@ -43,7 +43,8 @@ router.post("/", async (request, response) => {
   response.status(200).send({
     token,
     username: employee.username,
-    name: employee.name,
+    firstName: employee.firstName,
+    lastName: employee.lastName,
     admin: employee.admin,
     storeLocation: employee.storeLocation,
   });

@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
     include: [
       {
         model: Employee,
-        attributes: ["name", "id", "storeLocation"],
+        attributes: ["username", "id", "storeLocation"],
       },
       {
         model: Item,

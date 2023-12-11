@@ -22,12 +22,14 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const { username, name, password, admin, storeLocation } = req.body;
+    const { username, firstName, lastName, password, admin, storeLocation } =
+      req.body;
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
     const employee = await Employee.create({
       username,
-      name,
+      firstName,
+      lastName,
       passwordHash,
       admin,
       storeLocation,
