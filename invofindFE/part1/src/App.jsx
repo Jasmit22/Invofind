@@ -16,6 +16,7 @@ import TaskList from "./components/task/TaskList";
 import ItemList from "./components/item/ItemList";
 import IssueList from "./components/issue/IssueList";
 import LocationList from "./components/location/LocationList";
+import DepartmentList from "./components/extras/departments/DepartmentList";
 
 import "./App.css";
 
@@ -40,7 +41,6 @@ function App() {
   const [issues, setIssues] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [newDepartmentName, setNewDepartmentName] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
   const [locations, setLocations] = useState([]);
 
@@ -63,11 +63,6 @@ function App() {
     setTaskToDelete(null);
     setIssueToDelete(null);
     setItemToDelete(null);
-  };
-
-  const handleDeleteTaskClick = (task) => {
-    setTaskToDelete(task);
-    setIsDeleteTaskModalOpen(true);
   };
 
   const handleConfirmDelete = async () => {
@@ -249,67 +244,6 @@ function App() {
     );
   };
 
-  const showDepartments = () => {
-    return (
-      <div className="allDeptCat">
-        <table className="table-auto w-full">
-          <thead>
-            <tr className="text-left">
-              <th>Department Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {departments.map((dept, index) => (
-              <tr key={index}>
-                <td>• {dept.deptName}</td>
-                {user && user.admin && (
-                  <td>
-                    <button
-                      className="bg-[#f44336]"
-                      onClick={() => deleteDepartment(dept.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {user.admin && (
-          <div className="mt-4">
-            <input
-              value={newDepartmentName}
-              onChange={(e) => setNewDepartmentName(e.target.value)}
-              placeholder="New Department"
-              className="mr-10 w-50"
-            />
-            <button
-              onClick={addDepartment}
-              className="bg-[#a0d2eb] text-[#31343f]"
-            >
-              Add
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const addDepartment = () => {
-    if (!checkLoginStatus()) {
-      departmentService
-        .create({
-          deptName: newDepartmentName,
-          storeLocation: user.storeLocation,
-        })
-        .then((returnedDepartment) => {
-          setDepartments(departments.concat(returnedDepartment));
-          setNewDepartmentName("");
-        });
-    }
-  };
-
   const showCategories = () => {
     return (
       <div className="allDeptCat">
@@ -371,12 +305,6 @@ function App() {
     }
   };
 
-  const deleteDepartment = async (deptId) => {
-    // Implement deletion logic
-    await departmentService.remove(deptId);
-    fetchData(); // Refresh the departments list
-  };
-
   const deleteCategory = async (catId) => {
     // Implement deletion logic
     await categoryService.remove(catId);
@@ -407,7 +335,13 @@ function App() {
   const showExtras = () => {
     return (
       <div className="">
-        {showDepartments()}
+        <DepartmentList
+          departments={departments}
+          user={user}
+          fetchData={fetchData}
+          checkLoginStatus={checkLoginStatus}
+          departmentService={departmentService}
+        />
         {showCategories()}
       </div>
     );
@@ -457,7 +391,8 @@ function App() {
             fetchData={fetchData}
             checkLoginStatus={checkLoginStatus}
             taskService={taskService}
-            handleDeleteTaskClick={handleDeleteTaskClick}
+            setIsDeleteTaskModalOpen={setIsDeleteTaskModalOpen}
+            setTaskToDelete={setTaskToDelete}
           />
         </div>
         <div id="Info2" className="tabcontent">

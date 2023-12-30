@@ -10,7 +10,8 @@ const TaskList = ({
   fetchData,
   checkLoginStatus,
   taskService,
-  handleDeleteTaskClick,
+  setIsDeleteTaskModalOpen,
+  setTaskToDelete,
 }) => {
   const [newTaskFilter, setNewTaskFilter] = useState("");
 
@@ -50,7 +51,8 @@ const TaskList = ({
   const deleteTask = (task) => {
     // Check login status or perform any other necessary checks
     if (!checkLoginStatus()) {
-      handleDeleteTaskClick(task);
+      setTaskToDelete(task);
+      setIsDeleteTaskModalOpen(true);
     }
   };
 
