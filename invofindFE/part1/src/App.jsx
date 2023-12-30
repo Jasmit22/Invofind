@@ -10,13 +10,12 @@ import employeeService from "./services/employees";
 import departmentService from "./services/departments";
 import categoryService from "./services/categories";
 import locationService from "./services/locations";
-import Location from "./components/location/Location";
-import AddLocationForm from "./components/location/AddLocationForm";
 import ConfirmModal from "./components/ConfirmModal";
 import AddUserModal from "./components/user/AddUserModal";
 import TaskList from "./components/task/TaskList";
 import ItemList from "./components/item/ItemList";
 import IssueList from "./components/issue/IssueList";
+import LocationList from "./components/location/LocationList";
 
 import "./App.css";
 
@@ -43,7 +42,6 @@ function App() {
   const [categories, setCategories] = useState([]);
   const [newDepartmentName, setNewDepartmentName] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
-  const [newLocationFilter, setNewLocationFilter] = useState("");
   const [locations, setLocations] = useState([]);
 
   const handleLogoutClick = () => {
@@ -105,6 +103,17 @@ function App() {
     }
     setIsDeleteItemModalOpen(false);
     setItemToDelete(null);
+
+    if (locationToDelete) {
+      try {
+        await locationService.remove(locationToDelete.id);
+        fetchData();
+      } catch (error) {
+        console.error("Error deleting the location:", error);
+      }
+    }
+    setIsDeleteLocationModalOpen(false);
+    setLocationToDelete(null);
   };
 
   useEffect(() => {
@@ -404,87 +413,6 @@ function App() {
     );
   };
 
-  const renderAddLocation = () => {
-    return (
-      <div className="addLocation">
-        <Togglable buttonLabel="Add Location">
-          <AddLocationForm createLocation={addLocation} user={user} />
-        </Togglable>
-      </div>
-    );
-  };
-
-  const addLocation = (location) => {
-    if (!checkLoginStatus()) {
-      locationService.create(location).then((returnedLocation) => {
-        fetchData();
-      });
-    }
-  };
-
-  const deleteLocation = (location) => {
-    setLocationToDelete(location);
-    setIsDeleteLocationModalOpen(true);
-  };
-
-  const handleConfirmDeleteLocation = async () => {
-    if (locationToDelete) {
-      try {
-        await locationService.remove(locationToDelete.id);
-        fetchData();
-      } catch (error) {
-        console.error("Error deleting the location:", error);
-      }
-    }
-    setIsDeleteLocationModalOpen(false);
-    setLocationToDelete(null);
-  };
-
-  const filteredLocations = locations.filter((location) => {
-    return location.type
-      .toUpperCase()
-      .includes(newLocationFilter.toUpperCase());
-  });
-
-  const showLocations = () => {
-    return (
-      <div className="allItems">
-        {user !== null && user.admin && renderAddLocation()}
-        <input
-          className="filterLocations mb-6"
-          onChange={(event) => setNewLocationFilter(event.target.value)}
-          value={newLocationFilter}
-          placeholder={"Filter Locations"}
-        />
-        <div className="flex justify-center w-full">
-          <table className="w-full">
-            <tbody>
-              <tr>
-                <td>
-                  <b>Type</b>
-                </td>
-                <td>
-                  <b>Items</b>
-                </td>
-              </tr>
-              {filteredLocations.map((location) => (
-                <tr key={location.id}>
-                  <td>{location.type.toProperCase()}</td>
-                  <td>{location.items.map((item) => item.name).join(", ")}</td>
-                  <Location
-                    location={location}
-                    user={user}
-                    deleteLocation={() => deleteLocation(location)}
-                  />
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  };
-
   const showSample = () => {
     return (
       <div className="mx-10">
@@ -558,7 +486,15 @@ function App() {
           />
         </div>
         <div id="Info4" className="tabcontent">
-          {showLocations()}
+          <LocationList
+            locations={locations}
+            user={user}
+            fetchData={fetchData}
+            checkLoginStatus={checkLoginStatus}
+            locationService={locationService}
+            setLocationToDelete={setLocationToDelete}
+            setIsDeleteLocationModalOpen={setIsDeleteLocationModalOpen}
+          />
         </div>
         <div id="Extras" className="tabcontent">
           {showExtras()}
@@ -636,7 +572,7 @@ function App() {
       <ConfirmModal
         isOpen={isDeleteLocationModalOpen}
         onClose={() => setIsDeleteLocationModalOpen(false)}
-        onConfirm={handleConfirmDeleteLocation}
+        onConfirm={handleConfirmDelete}
         message="Are you sure you want to delete the location? All associated items will also be deleted."
       />
 
