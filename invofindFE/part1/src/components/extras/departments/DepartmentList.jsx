@@ -1,14 +1,9 @@
 import React, { useState } from "react";
-import Department from "./Department"; // Make sure to import the Department component
-import AddDepartmentForm from "./AddDepartmentForm"; // Make sure to import the AddDepartmentForm component
+import Department from "./Department";
+import AddDepartmentForm from "./AddDepartmentForm";
+import departmentService from "../../../services/departments";
 
-const DepartmentList = ({
-  departments,
-  user,
-  fetchData,
-  checkLoginStatus,
-  departmentService,
-}) => {
+const DepartmentList = ({ departments, user, fetchData, checkLoginStatus }) => {
   const [newDepartmentName, setNewDepartmentName] = useState("");
 
   const showDepartments = () => {

@@ -1,3 +1,4 @@
+import "./App.css";
 import { useState, useEffect } from "react";
 import Togglable from "./components/Togglable";
 import LoginForm from "./components/user/LoginForm";
@@ -7,8 +8,6 @@ import issueService from "./services/issues";
 import storeService from "./services/stores";
 import itemService from "./services/items";
 import employeeService from "./services/employees";
-import departmentService from "./services/departments";
-import categoryService from "./services/categories";
 import locationService from "./services/locations";
 import ConfirmModal from "./components/ConfirmModal";
 import AddUserModal from "./components/user/AddUserModal";
@@ -17,8 +16,7 @@ import ItemList from "./components/item/ItemList";
 import IssueList from "./components/issue/IssueList";
 import LocationList from "./components/location/LocationList";
 import DepartmentList from "./components/extras/departments/DepartmentList";
-
-import "./App.css";
+import CategoryList from "./components/extras/categories/CategoryList";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -41,12 +39,7 @@ function App() {
   const [issues, setIssues] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [newCategoryName, setNewCategoryName] = useState("");
   const [locations, setLocations] = useState([]);
-
-  const handleLogoutClick = () => {
-    setIsLogoutModalOpen(true);
-  };
 
   const handleConfirmLogout = () => {
     window.localStorage.removeItem("loggedAppUser");
@@ -120,20 +113,6 @@ function App() {
       issueService.setToken(user.token);
       storeService.setToken(user.token);
       itemService.setToken(user.token);
-    }
-  }, []);
-
-  useEffect(() => {
-    const invofindHeading = document.querySelector(".invofindHeading");
-    if (invofindHeading) {
-      invofindHeading.innerHTML = invofindHeading.innerText
-        .split("")
-        .map(
-          (letters, i) =>
-            `<span style = "transition-delay:${i * 30}ms;
-          filter: hue-rotate(${i * 15}deg)"›$">${letters}</span>`
-        )
-        .join("");
     }
   }, []);
 
@@ -237,82 +216,17 @@ function App() {
   const renderLogout = () => {
     return (
       <div className="mr-4">
-        <button className="headerButtons" onClick={handleLogoutClick}>
+        <button
+          className="headerButtons"
+          onClick={() => setIsLogoutModalOpen(true)}
+        >
           Log out
         </button>
       </div>
     );
   };
 
-  const showCategories = () => {
-    return (
-      <div className="allDeptCat">
-        <table className="table-auto w-full">
-          <thead>
-            <tr className="text-left">
-              <th>Category Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map((cat, index) => (
-              <tr key={index}>
-                <td>• {cat.name}</td>
-                {user && user.admin && (
-                  <td>
-                    <button
-                      className="bg-[#f44336]"
-                      onClick={() => deleteCategory(cat.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {user.admin && (
-          <div className="mt-4">
-            <input
-              value={newCategoryName}
-              onChange={(e) => setNewCategoryName(e.target.value)}
-              placeholder="New Category"
-              className="mr-10 w-50"
-            />
-            <button
-              onClick={addCategory}
-              className="bg-[#a0d2eb] text-[#31343f]"
-            >
-              Add
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const addCategory = () => {
-    if (!checkLoginStatus()) {
-      categoryService
-        .create({
-          name: newCategoryName,
-          storeLocation: user.storeLocation,
-        })
-        .then((returnedCategory) => {
-          setCategories(categories.concat(returnedCategory));
-          setNewCategoryName("");
-        });
-    }
-  };
-
-  const deleteCategory = async (catId) => {
-    // Implement deletion logic
-    await categoryService.remove(catId);
-    fetchData(); // Refresh the categories list
-  };
-
   function openInfo(evt, infoName) {
-    // Declare all variables
     var i, tabcontent, tablinks;
 
     // Get all elements with class="tabcontent" and hide them
@@ -340,9 +254,13 @@ function App() {
           user={user}
           fetchData={fetchData}
           checkLoginStatus={checkLoginStatus}
-          departmentService={departmentService}
         />
-        {showCategories()}
+        <CategoryList
+          categories={categories}
+          user={user}
+          fetchData={fetchData}
+          checkLoginStatus={checkLoginStatus}
+        />
       </div>
     );
   };
