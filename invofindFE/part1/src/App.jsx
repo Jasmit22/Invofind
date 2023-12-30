@@ -10,14 +10,13 @@ import employeeService from "./services/employees";
 import departmentService from "./services/departments";
 import categoryService from "./services/categories";
 import locationService from "./services/locations";
-import Issue from "./components/issue/Issue";
 import Location from "./components/location/Location";
-import AddIssueForm from "./components/issue/AddIssueForm";
 import AddLocationForm from "./components/location/AddLocationForm";
 import ConfirmModal from "./components/ConfirmModal";
 import AddUserModal from "./components/user/AddUserModal";
 import TaskList from "./components/task/TaskList";
 import ItemList from "./components/item/ItemList";
+import IssueList from "./components/issue/IssueList";
 
 import "./App.css";
 
@@ -27,7 +26,6 @@ function App() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [newIssueFilter, setNewIssueFilter] = useState("");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
   const [isDeleteIssueModalOpen, setIsDeleteIssueModalOpen] = useState(false);
@@ -214,90 +212,6 @@ function App() {
       }, 3000);
       console.log(exception);
     }
-  };
-
-  const filteredIssues = issues.filter((issue) => {
-    return issue.description
-      .toUpperCase()
-      .includes(newIssueFilter.toUpperCase());
-  });
-
-  const showIssues = () => {
-    return (
-      <div className="allItems">
-        {user !== null && renderAddIssue()}
-        <input
-          className="filterItems mb-6"
-          onChange={(event) => setNewIssueFilter(event.target.value)}
-          value={newIssueFilter}
-          placeholder={"Filter Issues"}
-        />
-        <div className="flex justify-center w-full">
-          <table className="w-full">
-            <tbody>
-              <tr>
-                <td>
-                  <b>Issue</b>
-                </td>
-              </tr>
-              {filteredIssues.map((issue) => (
-                <tr key={issue.id}>
-                  <td>{issue.description.toProperCase()}</td>
-                  <Issue
-                    issue={issue}
-                    markResolved={markIssueResolved}
-                    user={user}
-                    deleteIssue={deleteIssue}
-                  />
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  };
-
-  const markIssueResolved = async (issue) => {
-    if (!checkLoginStatus()) {
-      const newIssue = { ...issue };
-      newIssue.resolved = !issue.resolved;
-
-      await issueService.update(issue.id, newIssue);
-
-      fetchData();
-    }
-  };
-
-  const renderAddIssue = () => {
-    return (
-      <div className="addIssue">
-        <Togglable buttonLabel="Add Issue">
-          <AddIssueForm createIssue={addIssue} />
-        </Togglable>
-      </div>
-    );
-  };
-
-  const addIssue = (issue) => {
-    if (!checkLoginStatus()) {
-      if (issue.description !== null) {
-        issueService.create(issue).then((returnedIssue) => {
-          setIssues(issues.concat(returnedIssue));
-        });
-      }
-    }
-  };
-
-  const deleteIssue = (issue) => {
-    if (!checkLoginStatus()) {
-      handleDeleteIssueClick(issue);
-    }
-  };
-
-  const handleDeleteIssueClick = (issue) => {
-    setIssueToDelete(issue);
-    setIsDeleteIssueModalOpen(true);
   };
 
   const renderLogin = () => {
@@ -633,7 +547,15 @@ function App() {
           />
         </div>
         <div id="Info3" className="tabcontent">
-          {showIssues()}
+          <IssueList
+            issues={issues}
+            user={user}
+            fetchData={fetchData}
+            checkLoginStatus={checkLoginStatus}
+            issueService={issueService}
+            setIssueToDelete={setIssueToDelete}
+            setIsDeleteIssueModalOpen={setIsDeleteIssueModalOpen}
+          />
         </div>
         <div id="Info4" className="tabcontent">
           {showLocations()}
