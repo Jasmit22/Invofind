@@ -11,14 +11,13 @@ import departmentService from "./services/departments";
 import categoryService from "./services/categories";
 import locationService from "./services/locations";
 import Issue from "./components/issue/Issue";
-import Item from "./components/item/Item";
 import Location from "./components/location/Location";
 import AddIssueForm from "./components/issue/AddIssueForm";
-import AddItemForm from "./components/item/AddItemForm";
 import AddLocationForm from "./components/location/AddLocationForm";
 import ConfirmModal from "./components/ConfirmModal";
 import AddUserModal from "./components/user/AddUserModal";
 import TaskList from "./components/task/TaskList";
+import ItemList from "./components/item/ItemList";
 
 import "./App.css";
 
@@ -29,8 +28,6 @@ function App() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [newIssueFilter, setNewIssueFilter] = useState("");
-  const [newTaskFilter, setNewTaskFilter] = useState("");
-  const [newItemFilter, setNewItemFilter] = useState("");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
   const [isDeleteIssueModalOpen, setIsDeleteIssueModalOpen] = useState(false);
@@ -329,130 +326,6 @@ function App() {
     );
   };
 
-  const renderAddItem = () => {
-    return (
-      <div className="addItem">
-        <Togglable buttonLabel="Add Item">
-          <AddItemForm
-            createItem={addItem}
-            departments={departments}
-            categories={categories}
-            locations={locations}
-          />
-        </Togglable>
-      </div>
-    );
-  };
-
-  const addItem = (item) => {
-    if (!checkLoginStatus()) {
-      if (
-        item.name !== null &&
-        item.price !== null &&
-        item.quantity !== null &&
-        item.department !== null
-      ) {
-        itemService.create(item).then((returnedItem) => {
-          fetchData(); // Need to do this, or else items don't get populated correctly.
-        });
-      }
-    }
-  };
-
-  const showItems = () => {
-    return (
-      <div className="allItems">
-        {user !== null && renderAddItem()}
-        <input
-          className="filterItems mb-6"
-          onChange={(event) => setNewItemFilter(event.target.value)}
-          value={newItemFilter}
-          placeholder={"Filter Items"}
-        />
-        <div className="flex justify-center w-full">
-          <table className="w-full">
-            <tbody>
-              <tr>
-                <td>
-                  <b>Name</b>
-                </td>
-                <td>
-                  <b>Price</b>
-                </td>
-                <td>
-                  <b>Quantity</b>
-                </td>
-                <td>
-                  <b>Department</b>
-                </td>
-                <td>
-                  <b>Category</b>
-                </td>
-                <td>
-                  <b>Location</b>
-                </td>
-              </tr>
-              {filteredItems.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.name.toProperCase()}</td>
-                  <td>${item.price.toProperCase()}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.department.deptName}</td>
-                  <td>{item.category.name}</td>
-                  <td>{item.location.type}</td>
-                  <Item
-                    item={item}
-                    user={user}
-                    deleteItem={deleteItem}
-                    add={addQuantity}
-                    subtract={subtractQuantity}
-                  />
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  };
-
-  const addQuantity = async (item) => {
-    if (!checkLoginStatus()) {
-      const newItem = { ...item };
-      newItem.quantity = item.quantity + 1;
-
-      await itemService.update(item.id, newItem);
-
-      fetchData();
-    }
-  };
-
-  const subtractQuantity = async (item) => {
-    if (!checkLoginStatus()) {
-      const newItem = { ...item };
-      newItem.quantity = item.quantity - 1;
-
-      await itemService.update(item.id, newItem);
-
-      fetchData();
-    }
-  };
-
-  const filteredItems = items.filter((item) => {
-    return item.name.toUpperCase().includes(newItemFilter.toUpperCase());
-  });
-
-  const deleteItem = (item) => {
-    if (!checkLoginStatus()) {
-      handleDeleteItemClick(item);
-    }
-  };
-
-  const handleDeleteItemClick = (item) => {
-    setItemToDelete(item);
-    setIsDeleteItemModalOpen(true);
-  };
-
   const showDepartments = () => {
     return (
       <div className="allDeptCat">
@@ -746,7 +619,18 @@ function App() {
           />
         </div>
         <div id="Info2" className="tabcontent">
-          {showItems()}
+          <ItemList
+            items={items}
+            user={user}
+            departments={departments}
+            categories={categories}
+            locations={locations}
+            fetchData={fetchData}
+            checkLoginStatus={checkLoginStatus}
+            itemService={itemService}
+            setItemToDelete={setItemToDelete}
+            setIsDeleteItemModalOpen={setIsDeleteItemModalOpen}
+          />
         </div>
         <div id="Info3" className="tabcontent">
           {showIssues()}
