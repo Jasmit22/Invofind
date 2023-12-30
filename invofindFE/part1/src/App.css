@@ -77,12 +77,16 @@ input:focus {
 
 .invofindHeading {
   transition: 0.25s;
-  color: #a0d2eb;
   font-size: 40px;
   font-weight: 800;
-}
-.invofindHeading:hover {
   color: #a0d2eb;
+  background: linear-gradient(90deg, #a0d2eb, #d0bdf4);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.invofindHeading:hover {
+  color: white;
   text-shadow: 0 0 5px #d0bdf4, 0 0 15px #d0bdf4, 0 0 30px #d0bdf4;
 }
 
