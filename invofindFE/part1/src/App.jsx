@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Togglable from "./components/Togglable";
-import LoginForm from "./components/LoginForm";
+import LoginForm from "./components/user/LoginForm";
 import loginService from "./services/login";
 import taskService from "./services/tasks";
 import issueService from "./services/issues";
@@ -10,16 +10,16 @@ import employeeService from "./services/employees";
 import departmentService from "./services/departments";
 import categoryService from "./services/categories";
 import locationService from "./services/locations";
-import Task from "./components/Task";
-import Issue from "./components/Issue";
-import Item from "./components/Item";
-import Location from "./components/Location";
-import AddTaskForm from "./components/AddTaskForm";
-import AddIssueForm from "./components/AddIssueForm";
-import AddItemForm from "./components/AddItemForm";
-import AddLocationForm from "./components/AddLocationForm";
+import Task from "./components/task/Task";
+import Issue from "./components/issue/Issue";
+import Item from "./components/item/Item";
+import Location from "./components/location/Location";
+import AddTaskForm from "./components/task/AddTaskForm";
+import AddIssueForm from "./components/issue/AddIssueForm";
+import AddItemForm from "./components/item/AddItemForm";
+import AddLocationForm from "./components/location/AddLocationForm";
 import ConfirmModal from "./components/ConfirmModal";
-import AddUserModal from "./components/AddUserModal";
+import AddUserModal from "./components/user/AddUserModal";
 
 import "./App.css";
 
