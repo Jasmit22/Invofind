@@ -11,7 +11,14 @@ const AddItemForm = ({ createItem, departments, categories, locations }) => {
 
   const addItem = (event) => {
     event.preventDefault();
-    if (name && selectedDepartment && selectedCategory) {
+    if (
+      name &&
+      selectedDepartment &&
+      selectedCategory &&
+      selectedLocation &&
+      price &&
+      quantity
+    ) {
       const departmentObject = departments.find(
         (dept) => dept.deptName === selectedDepartment
       );

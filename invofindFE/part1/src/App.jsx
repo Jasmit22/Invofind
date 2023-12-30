@@ -9,7 +9,6 @@ import storeService from "./services/stores";
 import itemService from "./services/items";
 import employeeService from "./services/employees";
 import locationService from "./services/locations";
-import ConfirmModal from "./components/ConfirmModal";
 import AddUserModal from "./components/user/AddUserModal";
 import TaskList from "./components/task/TaskList";
 import ItemList from "./components/item/ItemList";
@@ -17,6 +16,7 @@ import IssueList from "./components/issue/IssueList";
 import LocationList from "./components/location/LocationList";
 import DepartmentList from "./components/extras/departments/DepartmentList";
 import CategoryList from "./components/extras/categories/CategoryList";
+import Modal from "./components/Modal";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -41,12 +41,6 @@ function App() {
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
 
-  const handleConfirmLogout = () => {
-    window.localStorage.removeItem("loggedAppUser");
-    setUser(null);
-    setIsLogoutModalOpen(false);
-  };
-
   const handleCloseModal = () => {
     setIsLogoutModalOpen(false);
     setIsDeleteTaskModalOpen(false);
@@ -56,6 +50,12 @@ function App() {
     setTaskToDelete(null);
     setIssueToDelete(null);
     setItemToDelete(null);
+  };
+
+  const handleConfirmLogout = () => {
+    window.localStorage.removeItem("loggedAppUser");
+    setUser(null);
+    setIsLogoutModalOpen(false);
   };
 
   const handleConfirmDelete = async () => {
@@ -102,6 +102,72 @@ function App() {
     }
     setIsDeleteLocationModalOpen(false);
     setLocationToDelete(null);
+  };
+
+  const handleAddUser = (username, firstName, lastName, password, admin) => {
+    const storeLocation = user.storeLocation;
+    employeeService.create({
+      username,
+      firstName,
+      lastName,
+      password,
+      admin,
+      storeLocation,
+    });
+    handleCloseModal();
+  };
+
+  const modals = {
+    logout: {
+      title: "Confirm Logout",
+      content: "Are you sure you want to log out?",
+      isOpen: isLogoutModalOpen,
+      onClose: handleCloseModal,
+      onConfirm: handleConfirmLogout,
+    },
+    deleteTask: {
+      title: "Confirm Task Deletion",
+      content: "Are you sure you want to delete this task?",
+      isOpen: isDeleteTaskModalOpen,
+      onClose: handleCloseModal,
+      onConfirm: handleConfirmDelete,
+    },
+    deleteIssue: {
+      title: "Confirm Issue Deletion",
+      content: "Are you sure you want to delete this issue?",
+      isOpen: isDeleteIssueModalOpen,
+      onClose: handleCloseModal,
+      onConfirm: handleConfirmDelete,
+    },
+    deleteItem: {
+      title: "Confirm Item Deletion",
+      content: "Are you sure you want to delete this item?",
+      isOpen: isDeleteItemModalOpen,
+      onClose: handleCloseModal,
+      onConfirm: handleConfirmDelete,
+    },
+    deleteLocation: {
+      title: "Confirm Location Deletion",
+      content:
+        "Are you sure you want to delete the location? All associated items will also be deleted.",
+      isOpen: isDeleteLocationModalOpen,
+      onClose: () => setIsDeleteLocationModalOpen(false),
+      onConfirm: handleConfirmDelete,
+    },
+    addUser: {
+      title: "Add Employee",
+      content: (
+        <AddUserModal
+          onClose={handleCloseModal}
+          onAdd={handleAddUser}
+          message="Add an Employee"
+          isOpen={isAddUserModalOpen}
+        />
+      ),
+      isOpen: isAddUserModalOpen,
+      onClose: handleCloseModal,
+      onConfirm: null, // No confirmation button for this modal
+    },
   };
 
   useEffect(() => {
@@ -265,7 +331,7 @@ function App() {
     );
   };
 
-  const showSample = () => {
+  const showContent = () => {
     return (
       <div className="mx-10">
         <div className="tab">
@@ -371,70 +437,19 @@ function App() {
     );
   };
 
-  const handleAddUser = (username, firstName, lastName, password, admin) => {
-    const storeLocation = user.storeLocation;
-    employeeService.create({
-      username,
-      firstName,
-      lastName,
-      password,
-      admin,
-      storeLocation,
-    });
-    handleCloseModal();
-  };
-
   return (
     <div className="w-screen">
       <div className="flex fixed z-100 top-0 w-full justify-between pl-3 h-15 items-center bg-[#31343f] border-solid border-[#a0d2eb] border-b">
-        <div className="invofindHeading">InvoFind 🔍</div>
+        <div className="invofindHeading">InvoFind</div>
         <div className="flex">
           {user !== null && user.admin && renderAddUser()}
           {user !== null && renderLogout()}
         </div>
       </div>
 
-      <ConfirmModal
-        isOpen={isLogoutModalOpen}
-        onClose={handleCloseModal}
-        onConfirm={handleConfirmLogout}
-        message="Are you sure you want to log out?"
-      />
-
-      <ConfirmModal
-        isOpen={isDeleteTaskModalOpen}
-        onClose={handleCloseModal}
-        onConfirm={handleConfirmDelete}
-        message="Are you sure you want to delete this task?"
-      />
-
-      <ConfirmModal
-        isOpen={isDeleteIssueModalOpen}
-        onClose={handleCloseModal}
-        onConfirm={handleConfirmDelete}
-        message="Are you sure you want to delete this issue?"
-      />
-
-      <ConfirmModal
-        isOpen={isDeleteItemModalOpen}
-        onClose={handleCloseModal}
-        onConfirm={handleConfirmDelete}
-        message="Are you sure you want to delete this item?"
-      />
-
-      <ConfirmModal
-        isOpen={isDeleteLocationModalOpen}
-        onClose={() => setIsDeleteLocationModalOpen(false)}
-        onConfirm={handleConfirmDelete}
-        message="Are you sure you want to delete the location? All associated items will also be deleted."
-      />
-
-      <AddUserModal
-        isOpen={isAddUserModalOpen}
-        onClose={handleCloseModal}
-        onAdd={handleAddUser}
-        message="Add an Employee"
-      />
+      {Object.keys(modals).map((modalKey) => (
+        <Modal key={modalKey} {...modals[modalKey]} />
+      ))}
 
       {errorMessage && (
         <div className="error-overlay">
@@ -444,7 +459,7 @@ function App() {
 
       <div className="content">
         {user === null && renderLogin()}
-        {user !== null && showSample()}
+        {user !== null && showContent()}
       </div>
     </div>
   );

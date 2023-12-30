@@ -6,12 +6,11 @@ const AddIssueForm = ({ createIssue }) => {
 
   const addIssue = (event) => {
     event.preventDefault();
-    if (description !== null) {
+    if (description) {
       createIssue({
         description: description,
         resolved: false,
       });
-
       setDescription("");
     }
   };

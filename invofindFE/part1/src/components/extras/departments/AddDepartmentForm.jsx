@@ -6,7 +6,7 @@ const AddDepartmentForm = ({ createDepartment }) => {
 
   const addDepartment = (event) => {
     event.preventDefault();
-    if (newDepartmentName !== null) {
+    if (newDepartmentName) {
       createDepartment({
         deptName: newDepartmentName,
       });

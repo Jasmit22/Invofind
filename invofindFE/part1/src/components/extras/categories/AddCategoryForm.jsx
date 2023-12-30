@@ -6,7 +6,7 @@ const AddCategoryForm = ({ createCategory }) => {
 
   const addCategory = (event) => {
     event.preventDefault();
-    if (newCategoryName !== null) {
+    if (newCategoryName) {
       createCategory({
         name: newCategoryName,
       });
