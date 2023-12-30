@@ -10,16 +10,15 @@ import employeeService from "./services/employees";
 import departmentService from "./services/departments";
 import categoryService from "./services/categories";
 import locationService from "./services/locations";
-import Task from "./components/task/Task";
 import Issue from "./components/issue/Issue";
 import Item from "./components/item/Item";
 import Location from "./components/location/Location";
-import AddTaskForm from "./components/task/AddTaskForm";
 import AddIssueForm from "./components/issue/AddIssueForm";
 import AddItemForm from "./components/item/AddItemForm";
 import AddLocationForm from "./components/location/AddLocationForm";
 import ConfirmModal from "./components/ConfirmModal";
 import AddUserModal from "./components/user/AddUserModal";
+import TaskList from "./components/task/TaskList";
 
 import "./App.css";
 
@@ -220,83 +219,6 @@ function App() {
     }
   };
 
-  const filteredTasks = tasks.filter((task) => {
-    return task.content.toUpperCase().includes(newTaskFilter.toUpperCase());
-  });
-
-  String.prototype.toProperCase = function () {
-    return this.replace(/\w\S*/g, function (txt) {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
-  };
-
-  const showTasks = () => {
-    return (
-      <div className="allItems">
-        {user !== null && user.admin && renderAddTask()}
-        <input
-          className="filterItems mb-6"
-          onChange={(event) => setNewTaskFilter(event.target.value)}
-          value={newTaskFilter}
-          placeholder={"Filter Tasks"}
-        />
-        <div className="flex justify-center w-full">
-          <table className="w-full">
-            <tbody>
-              <tr className="">
-                <td>
-                  <b>Task Description</b>
-                </td>
-                <td>
-                  <b>Associated Item</b>
-                </td>
-              </tr>
-              {filteredTasks.map((task) => (
-                <tr key={task.id}>
-                  <td>{task.content.toProperCase()}</td>
-                  <Task
-                    task={task}
-                    markResolved={markTaskResolved}
-                    user={user}
-                    deleteTask={deleteTask}
-                    toProperCase={String.prototype.toProperCase}
-                  />
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  };
-
-  const markTaskResolved = async (task) => {
-    if (!checkLoginStatus()) {
-      const newTask = { ...task };
-      newTask.resolved = !task.resolved;
-
-      await taskService.update(task.id, newTask);
-
-      fetchData();
-    }
-  };
-
-  const addTask = (task) => {
-    if (!checkLoginStatus()) {
-      if (task.content !== null) {
-        taskService.create(task).then((returnedTask) => {
-          fetchData();
-        });
-      }
-    }
-  };
-
-  const deleteTask = (task) => {
-    if (!checkLoginStatus()) {
-      handleDeleteTaskClick(task);
-    }
-  };
-
   const filteredIssues = issues.filter((issue) => {
     return issue.description
       .toUpperCase()
@@ -403,16 +325,6 @@ function App() {
         <button className="headerButtons" onClick={handleLogoutClick}>
           Log out
         </button>
-      </div>
-    );
-  };
-
-  const renderAddTask = () => {
-    return (
-      <div className="addTask">
-        <Togglable buttonLabel="Add Task">
-          <AddTaskForm createTask={addTask} items={items} />
-        </Togglable>
       </div>
     );
   };
@@ -823,7 +735,15 @@ function App() {
         </div>
 
         <div id="Info1" className="tabcontent">
-          {showTasks()}
+          <TaskList
+            tasks={tasks}
+            user={user}
+            items={items}
+            fetchData={fetchData}
+            checkLoginStatus={checkLoginStatus}
+            taskService={taskService}
+            handleDeleteTaskClick={handleDeleteTaskClick}
+          />
         </div>
         <div id="Info2" className="tabcontent">
           {showItems()}
