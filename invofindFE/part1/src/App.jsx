@@ -82,7 +82,7 @@ function App() {
     if (taskToDelete) {
       try {
         await taskService.remove(taskToDelete.id);
-        fetchTasks();
+        fetchData();
       } catch (error) {
         console.error("Error deleting the task:", error);
       }
@@ -93,7 +93,7 @@ function App() {
     if (issueToDelete) {
       try {
         await issueService.remove(issueToDelete.id);
-        fetchIssues();
+        fetchData();
       } catch (error) {
         console.error("Error deleting the issue:", error);
       }
@@ -104,7 +104,7 @@ function App() {
     if (itemToDelete) {
       try {
         await itemService.remove(itemToDelete.id);
-        fetchItems();
+        fetchData();
       } catch (error) {
         console.error("Error deleting the item:", error);
       }
@@ -139,52 +139,50 @@ function App() {
     }
   }, []);
 
-  const fetchTasks = () => {
+  const fetchData = () => {
     if (user) {
-      taskService.getAll().then((allTasks) => {
-        const userStoreLocation = user.storeLocation; // Assuming this is how you store the user's store location
+      Promise.all([
+        taskService.getAll(),
+        issueService.getAll(),
+        storeService.getById(user.storeLocation),
+        itemService.getAll(),
+        locationService.getAll(),
+      ]).then(([allTasks, allIssues, store, allItems, allLocations]) => {
+        const userStoreLocation = user.storeLocation;
+
+        // Fetch tasks for the user's store location
         const tasksForUserStore = allTasks.filter(
           (task) => task.employee.storeLocation === userStoreLocation
         );
         setTasks(tasksForUserStore);
-      });
-    }
-  };
 
-  const fetchIssues = () => {
-    if (user) {
-      issueService.getAll().then((allIssues) => {
-        const userStoreLocation = user.storeLocation; // Assuming this is how you store the user's store location
+        // Fetch issues for the user's store location
         const issuesForUserStore = allIssues.filter(
           (issue) => issue.employee.storeLocation === userStoreLocation
         );
         setIssues(issuesForUserStore);
+
+        // Set departments and categories from the store
+        setDepartments(store.departments);
+        setCategories(store.categories);
+
+        // Fetch items for the user's store location
+        const itemsForUserStore = allItems.filter(
+          (item) => item.department.storeLocation === userStoreLocation
+        );
+        setItems(itemsForUserStore);
+
+        // Fetch locations for the user's store location
+        const locationsForUserStore = allLocations.filter(
+          (location) => location.storeLocation === userStoreLocation
+        );
+        setLocations(locationsForUserStore);
       });
     }
   };
 
   useEffect(() => {
-    fetchTasks();
-  }, [user]);
-
-  useEffect(() => {
-    fetchIssues();
-  }, [user]);
-
-  useEffect(() => {
-    fetchDepartments();
-  }, [user]);
-
-  useEffect(() => {
-    fetchCategories();
-  }, [user]);
-
-  useEffect(() => {
-    fetchItems();
-  }, [user]);
-
-  useEffect(() => {
-    fetchLocations();
+    fetchData();
   }, [user]);
 
   const checkLoginStatus = () => {
@@ -279,7 +277,7 @@ function App() {
 
       await taskService.update(task.id, newTask);
 
-      fetchTasks();
+      fetchData();
     }
   };
 
@@ -287,7 +285,7 @@ function App() {
     if (!checkLoginStatus()) {
       if (task.content !== null) {
         taskService.create(task).then((returnedTask) => {
-          fetchTasks();
+          fetchData();
         });
       }
     }
@@ -348,7 +346,7 @@ function App() {
 
       await issueService.update(issue.id, newIssue);
 
-      fetchIssues();
+      fetchData();
     }
   };
 
@@ -443,37 +441,9 @@ function App() {
         item.department !== null
       ) {
         itemService.create(item).then((returnedItem) => {
-          fetchItems(); // Need to do this, or else items don't get populated correctly.
+          fetchData(); // Need to do this, or else items don't get populated correctly.
         });
       }
-    }
-  };
-
-  const fetchDepartments = () => {
-    if (user) {
-      storeService.getById(user.storeLocation).then((store) => {
-        setDepartments(store.departments);
-      });
-    }
-  };
-
-  const fetchCategories = () => {
-    if (user) {
-      storeService.getById(user.storeLocation).then((store) => {
-        setCategories(store.categories);
-      });
-    }
-  };
-
-  const fetchItems = () => {
-    if (user) {
-      itemService.getAll().then((allItems) => {
-        const userStoreLocation = user.storeLocation; // Assuming this is how you store the user's store location
-        const itemsForUserStore = allItems.filter(
-          (item) => item.department.storeLocation === userStoreLocation
-        );
-        setItems(itemsForUserStore);
-      });
     }
   };
 
@@ -541,7 +511,7 @@ function App() {
 
       await itemService.update(item.id, newItem);
 
-      fetchItems();
+      fetchData();
     }
   };
 
@@ -552,7 +522,7 @@ function App() {
 
       await itemService.update(item.id, newItem);
 
-      fetchItems();
+      fetchData();
     }
   };
 
@@ -696,13 +666,13 @@ function App() {
   const deleteDepartment = async (deptId) => {
     // Implement deletion logic
     await departmentService.remove(deptId);
-    fetchDepartments(); // Refresh the departments list
+    fetchData(); // Refresh the departments list
   };
 
   const deleteCategory = async (catId) => {
     // Implement deletion logic
     await categoryService.remove(catId);
-    fetchCategories(); // Refresh the categories list
+    fetchData(); // Refresh the categories list
   };
 
   function openInfo(evt, infoName) {
@@ -748,7 +718,7 @@ function App() {
   const addLocation = (location) => {
     if (!checkLoginStatus()) {
       locationService.create(location).then((returnedLocation) => {
-        fetchLocations();
+        fetchData();
       });
     }
   };
@@ -762,8 +732,7 @@ function App() {
     if (locationToDelete) {
       try {
         await locationService.remove(locationToDelete.id);
-        fetchLocations();
-        fetchItems(); // Assuming you want to refresh items after deleting a location
+        fetchData();
       } catch (error) {
         console.error("Error deleting the location:", error);
       }
@@ -777,18 +746,6 @@ function App() {
       .toUpperCase()
       .includes(newLocationFilter.toUpperCase());
   });
-
-  const fetchLocations = () => {
-    if (user) {
-      locationService.getAll().then((allLocations) => {
-        const userStoreLocation = user.storeLocation; // Assuming this is how you store the user's store location
-        const locationsForUserStore = allLocations.filter(
-          (location) => location.storeLocation === userStoreLocation
-        );
-        setLocations(locationsForUserStore);
-      });
-    }
-  };
 
   const showLocations = () => {
     return (
