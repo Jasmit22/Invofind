@@ -1,12 +1,12 @@
-# invofind
+# Invofind
 
-**Invofind** is integrated with Postgres and utilizes the Sequelize library. Built with Node.js, React, and Tailwind.
+**Invofind** is integrated with Postgres and utilizes the Sequelize library. Built with Node.js + Express and React.
 
 ## Introduction
 We created a database for an inventory management system to address the challenge of employees and store administrators needing to accurately determine the location and quantity of products. Manually tracking products can be cumbersome and ineffective, leading to poor store organization and opening the possibility of errors in a company’s inventory. The database we developed aims to streamline this process and allow store employees to effectively track products.
 
 ## Project Design
-Our system caters to two end-users: **Admins** and **Users**.
+The system caters to two end-users: **Admins** and **Users**.
 
 ### Admins
 Admins are distinguished users within our system with elevated privileges, allowing them to use functionalities which aren’t accessible to regular users. Elevated permissions entrust Admins to effectively administer and oversee critical aspects of the inventory management system. This is particularly useful for store management as they may require additional permissions not suitable for employees.
