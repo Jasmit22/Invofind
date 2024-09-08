@@ -38,7 +38,7 @@ const AddUserModal = ({ isOpen, onClose, onAdd, message }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-[#31343f] p-4 rounded-lg text-center">
+      <div className="bg-[#31343f] p-4 rounded-lg text-center w-80">
         <p className="text-white mb-4">
           <b>{message}</b>
         </p>
@@ -78,7 +78,7 @@ const AddUserModal = ({ isOpen, onClose, onAdd, message }) => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
-          <div className="flex items-center mb-2">
+          <div className="flex items-center my-2 justify-center">
             <input
               id="role-user"
               type="radio"
