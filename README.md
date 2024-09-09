@@ -5,6 +5,9 @@
 ## Introduction
 We created a database for an inventory management system to address the challenge of employees and store administrators needing to accurately determine the location and quantity of products. Manually tracking products can be cumbersome and ineffective, leading to poor store organization and opening the possibility of errors in a company’s inventory. The database we developed aims to streamline this process and allow store employees to effectively track products. Everything is fully implemented, including authentication. We implemented our knowledge of DBMS concepts, such as many-to-many relationships. 
 
+## Video Demo
+https://youtu.be/DggZF4MN1Qk
+
 ## Project Design
 The system caters to two end-users: **Admins** and **Users**. Authentication is implemented with JWT and both end-users are rendered dynamic content based on their privileges. SQL relationships ensure users can only see what they are supposed to see. For example, companies can not see the data of other companies, and each employee is assigned to only 1 store (stores and companies are different, a company can own several stores).
 
