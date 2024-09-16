@@ -5,6 +5,9 @@
 ## Introduction
 We created a database for an inventory management system to address the challenge of employees and store administrators needing to accurately determine the location and quantity of products. Manually tracking products can be cumbersome and ineffective, leading to poor store organization and opening the possibility of errors in a company’s inventory. The database we developed aims to streamline this process and allow store employees to effectively track products. Everything is fully implemented, including authentication. We implemented our knowledge of DBMS concepts, such as many-to-many relationships. 
 
+> [!NOTE]
+> Invofind requires a PostgreSQL database to run locally.
+
 ## Video Demo
 https://youtu.be/DggZF4MN1Qk
 
@@ -16,6 +19,9 @@ Admins are distinguished users within our system with elevated privileges, allow
 
 ### Users
 Users represent regular employees within the inventory management system. Our website allows users to efficiently locate products within store inventory by equipping them with the necessary tools and access privileges. Users are limited in their level of access as they do not need to oversee all aspects of the inventory management system.
+
+> [!IMPORTANT]
+> Invofind requires new companies are manually registered.
 
 <img width="1705" alt="image" src="https://github.com/user-attachments/assets/51f5cce3-bed2-4df1-bb1a-dff5a6fadb78">
 
